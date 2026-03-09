@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MapPin, Bell, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { categories, restaurants } from "@/data/mockData";
 import CategoryChip from "@/components/CategoryChip";
