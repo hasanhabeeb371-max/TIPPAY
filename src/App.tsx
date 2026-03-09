@@ -16,6 +16,11 @@ import RestaurantLayout from "./pages/restaurant/RestaurantLayout";
 import OrderManagement from "./pages/restaurant/OrderManagement";
 import MenuEditor from "./pages/restaurant/MenuEditor";
 import RestaurantAnalytics from "./pages/restaurant/RestaurantAnalytics";
+import DeliveryLayout from "./pages/delivery/DeliveryLayout";
+import NearbyOrders from "./pages/delivery/NearbyOrders";
+import ActiveDelivery from "./pages/delivery/ActiveDelivery";
+import DeliveryStats from "./pages/delivery/DeliveryStats";
+import DeliveryProfile from "./pages/delivery/DeliveryProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +51,15 @@ const AppRoutes = () => (
       <Route path="orders" element={<OrderManagement />} />
       <Route path="menu" element={<MenuEditor />} />
       <Route path="analytics" element={<RestaurantAnalytics />} />
+    </Route>
+
+    {/* Delivery Agent Dashboard */}
+    <Route path="/delivery/dashboard" element={<ProtectedRoute><DeliveryLayout /></ProtectedRoute>}>
+      <Route index element={<Navigate to="orders" replace />} />
+      <Route path="orders" element={<NearbyOrders />} />
+      <Route path="active" element={<ActiveDelivery />} />
+      <Route path="stats" element={<DeliveryStats />} />
+      <Route path="profile" element={<DeliveryProfile />} />
     </Route>
 
     <Route path="*" element={<NotFound />} />

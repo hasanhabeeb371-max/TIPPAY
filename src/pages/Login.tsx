@@ -21,7 +21,7 @@ const Login = () => {
   const getRedirectPath = (role: UserRole) => {
     switch (role) {
       case "restaurant": return "/restaurant/dashboard";
-      case "delivery": return "/home"; // TODO: delivery dashboard
+      case "delivery": return "/delivery/dashboard";
       case "admin": return "/home"; // TODO: admin dashboard
       default: return "/home";
     }
