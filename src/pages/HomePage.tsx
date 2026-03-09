@@ -27,11 +27,13 @@ const HomePage = () => {
       {/* Header */}
       <div className="sticky top-0 z-40 bg-background/95 px-4 pb-2 pt-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" onClick={() => navigate("/addresses")} role="button">
             <MapPin size={18} className="text-accent" />
             <div>
               <p className="text-xs text-muted-foreground">Delivering to</p>
-              <p className="text-sm font-semibold text-foreground">Current Location</p>
+              <p className="text-sm font-semibold text-foreground truncate max-w-[200px]">
+                {selectedAddress ? `${selectedAddress.label} · ${selectedAddress.fullAddress.split(",")[0]}` : "Add Address"}
+              </p>
             </div>
           </div>
           <button className="relative rounded-full bg-card p-2">

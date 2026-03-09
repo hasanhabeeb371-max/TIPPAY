@@ -4,16 +4,18 @@ import { User, Mail, Phone, LogOut, ChevronRight, MapPin, Heart, HelpCircle } fr
 import { Button } from "@/components/ui/button";
 import BottomNav from "@/components/BottomNav";
 import { motion } from "framer-motion";
-
-const menuItems = [
-  { icon: MapPin, label: "Saved Addresses", desc: "Manage delivery addresses" },
-  { icon: Heart, label: "Favorites", desc: "Your favorite restaurants" },
-  { icon: HelpCircle, label: "Help & Support", desc: "Get help with orders" },
-];
+import { useAddress } from "@/context/AddressContext";
 
 const ProfilePage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { addresses } = useAddress();
+
+  const menuItems = [
+    { icon: MapPin, label: "Saved Addresses", desc: `${addresses.length} saved address${addresses.length !== 1 ? "es" : ""}`, action: () => navigate("/addresses") },
+    { icon: Heart, label: "Favorites", desc: "Your favorite restaurants", action: () => {} },
+    { icon: HelpCircle, label: "Help & Support", desc: "Get help with orders", action: () => {} },
+  ];
 
   const handleLogout = () => {
     logout();
@@ -26,7 +28,6 @@ const ProfilePage = () => {
         <h1 className="font-display text-lg font-bold">Profile</h1>
       </div>
 
-      {/* User Card */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -50,7 +51,6 @@ const ProfilePage = () => {
         </div>
       </motion.div>
 
-      {/* Menu */}
       <div className="mx-4 mt-4 space-y-2">
         {menuItems.map((item, i) => (
           <motion.button
@@ -58,6 +58,7 @@ const ProfilePage = () => {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
+            onClick={item.action}
             className="flex w-full items-center gap-3 rounded-xl bg-card p-4 text-left"
           >
             <item.icon size={18} className="text-muted-foreground" />
