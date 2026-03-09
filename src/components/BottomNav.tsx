@@ -20,6 +20,10 @@ const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/95 backdrop-blur-md">
+      {/* Floating notification bell for customer */}
+      <div className="absolute -top-14 right-4">
+        <NotificationCenter className="rounded-full bg-background shadow-lg border border-border" />
+      </div>
       <div className="mx-auto flex max-w-lg items-center justify-around py-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;

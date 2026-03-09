@@ -101,7 +101,8 @@ const App = () => {
               <BrowserRouter>
                 <AppRoutes />
               </BrowserRouter>
-          </TooltipProvider>
+            </TooltipProvider>
+          </NotificationProvider>
         </CartProvider>
       </AuthProvider>
     </QueryClientProvider>
