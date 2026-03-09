@@ -113,6 +113,7 @@ const Login = () => {
 
         <div className="pt-2 text-center text-xs text-muted-foreground/60">
           <p>Demo: any email → Customer</p>
+          <p>rest@tippay.restaurant.com → Restaurant</p>
           <p>agent@tippay.agent.com → Delivery</p>
           <p>admin@tippay.admin.com → Admin</p>
         </div>
