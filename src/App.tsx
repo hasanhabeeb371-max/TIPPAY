@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
+import { AddressProvider } from "@/context/AddressContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import SplashScreen from "./pages/SplashScreen";
 import Login from "./pages/Login";
