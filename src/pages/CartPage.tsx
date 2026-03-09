@@ -1,4 +1,5 @@
 import { useCart } from "@/context/CartContext";
+import { useOrders } from "@/context/OrderContext";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,15 +9,32 @@ import BottomNav from "@/components/BottomNav";
 
 const CartPage = () => {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();
+  const { placeOrder } = useOrders();
   const navigate = useNavigate();
 
   const deliveryFee = items.length > 0 ? 30 : 0;
   const grandTotal = totalPrice + deliveryFee;
 
   const handleCheckout = () => {
-    toast.success("Order placed successfully! 🎉");
+    if (items.length === 0) return;
+    const restaurantName = items[0].restaurantName;
+    const restaurantId = items[0].restaurantId;
+    const orderId = placeOrder({
+      restaurantId,
+      restaurantName,
+      items: items.map((i) => ({
+        name: i.name,
+        quantity: i.quantity,
+        price: i.offerPrice || i.price,
+        image: i.image,
+      })),
+      totalPrice: grandTotal,
+      deliveryFee,
+      estimatedDelivery: "25-35 min",
+    });
     clearCart();
-    navigate("/orders");
+    toast.success("Order placed successfully! 🎉");
+    navigate(`/order/${orderId}`);
   };
 
   return (
