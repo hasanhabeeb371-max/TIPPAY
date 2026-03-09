@@ -22,7 +22,7 @@ const Login = () => {
     switch (role) {
       case "restaurant": return "/restaurant/dashboard";
       case "delivery": return "/delivery/dashboard";
-      case "admin": return "/home"; // TODO: admin dashboard
+      case "admin": return "/admin/dashboard";
       default: return "/home";
     }
   };
