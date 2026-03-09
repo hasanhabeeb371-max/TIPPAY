@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth, type UserRole } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,14 +18,29 @@ const Login = () => {
   const { login, signup } = useAuth();
   const navigate = useNavigate();
 
+  const getRedirectPath = (role: UserRole) => {
+    switch (role) {
+      case "restaurant": return "/restaurant/dashboard";
+      case "delivery": return "/home"; // TODO: delivery dashboard
+      case "admin": return "/home"; // TODO: admin dashboard
+      default: return "/home";
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isSignup) {
       signup(name, email, phone, password);
+      navigate("/home");
     } else {
       login(email, password);
+      // Detect role from email for redirect
+      const role = email.endsWith("@tippay.admin.com") ? "admin"
+        : email.endsWith("@tippay.agent.com") ? "delivery"
+        : email.includes("restaurant") ? "restaurant"
+        : "customer";
+      navigate(getRedirectPath(role));
     }
-    navigate("/home");
   };
 
   return (

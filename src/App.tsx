@@ -12,6 +12,10 @@ import CartPage from "./pages/CartPage";
 import SearchPage from "./pages/SearchPage";
 import OrdersPage from "./pages/OrdersPage";
 import ProfilePage from "./pages/ProfilePage";
+import RestaurantLayout from "./pages/restaurant/RestaurantLayout";
+import OrderManagement from "./pages/restaurant/OrderManagement";
+import MenuEditor from "./pages/restaurant/MenuEditor";
+import RestaurantAnalytics from "./pages/restaurant/RestaurantAnalytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +39,15 @@ const AppRoutes = () => (
     <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
     <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+
+    {/* Restaurant Dashboard */}
+    <Route path="/restaurant/dashboard" element={<ProtectedRoute><RestaurantLayout /></ProtectedRoute>}>
+      <Route index element={<Navigate to="orders" replace />} />
+      <Route path="orders" element={<OrderManagement />} />
+      <Route path="menu" element={<MenuEditor />} />
+      <Route path="analytics" element={<RestaurantAnalytics />} />
+    </Route>
+
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
