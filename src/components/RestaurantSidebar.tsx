@@ -1,4 +1,5 @@
 import { ClipboardList, UtensilsCrossed, BarChart3, LogOut, Store } from "lucide-react";
+import NotificationCenter from "@/components/NotificationCenter";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
