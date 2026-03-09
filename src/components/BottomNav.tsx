@@ -1,7 +1,9 @@
-import { Home, Search, ShoppingCart, Clock, User } from "lucide-react";
+import { Home, Search, ShoppingCart, Clock, User, Bell } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { useNotifications } from "@/context/NotificationContext";
 import { motion } from "framer-motion";
+import NotificationCenter from "./NotificationCenter";
 
 const navItems = [
   { icon: Home, label: "Home", path: "/home" },
