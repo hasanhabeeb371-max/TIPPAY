@@ -93,13 +93,14 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CartProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
+          <NotificationProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
           </TooltipProvider>
         </CartProvider>
       </AuthProvider>
