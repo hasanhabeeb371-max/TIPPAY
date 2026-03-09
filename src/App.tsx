@@ -100,6 +100,7 @@ const App = () => {
       <AuthProvider>
         <CartProvider>
           <OrderProvider>
+            <AddressProvider>
             <NotificationProvider>
               <TooltipProvider>
                 <Toaster />
