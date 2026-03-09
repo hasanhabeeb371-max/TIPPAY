@@ -18,6 +18,7 @@ import SearchPage from "./pages/SearchPage";
 import OrdersPage from "./pages/OrdersPage";
 import OrderTrackingPage from "./pages/OrderTrackingPage";
 import ProfilePage from "./pages/ProfilePage";
+import AddressPage from "./pages/AddressPage";
 import RestaurantLayout from "./pages/restaurant/RestaurantLayout";
 import OrderManagement from "./pages/restaurant/OrderManagement";
 import MenuEditor from "./pages/restaurant/MenuEditor";
