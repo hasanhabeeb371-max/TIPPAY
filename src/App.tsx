@@ -21,6 +21,12 @@ import NearbyOrders from "./pages/delivery/NearbyOrders";
 import ActiveDelivery from "./pages/delivery/ActiveDelivery";
 import DeliveryStats from "./pages/delivery/DeliveryStats";
 import DeliveryProfile from "./pages/delivery/DeliveryProfile";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminOverview from "./pages/admin/AdminOverview";
+import AdminRestaurants from "./pages/admin/AdminRestaurants";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminAgents from "./pages/admin/AdminAgents";
+import AdminUsers from "./pages/admin/AdminUsers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +66,16 @@ const AppRoutes = () => (
       <Route path="active" element={<ActiveDelivery />} />
       <Route path="stats" element={<DeliveryStats />} />
       <Route path="profile" element={<DeliveryProfile />} />
+    </Route>
+
+    {/* Admin Dashboard */}
+    <Route path="/admin/dashboard" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+      <Route index element={<Navigate to="overview" replace />} />
+      <Route path="overview" element={<AdminOverview />} />
+      <Route path="restaurants" element={<AdminRestaurants />} />
+      <Route path="orders" element={<AdminOrders />} />
+      <Route path="agents" element={<AdminAgents />} />
+      <Route path="users" element={<AdminUsers />} />
     </Route>
 
     <Route path="*" element={<NotFound />} />
