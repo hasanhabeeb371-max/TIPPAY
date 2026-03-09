@@ -225,6 +225,30 @@ const OrderTrackingPage = () => {
         </div>
       </div>
 
+      {/* Review Section - shown after delivery */}
+      {isDelivered && (
+        <div className="mx-4 mt-6">
+          {!showReview && !getReviewForOrder(order.id) ? (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => setShowReview(true)}
+              className="w-full rounded-2xl bg-accent/15 p-4 text-center transition-colors hover:bg-accent/25"
+            >
+              <p className="font-display text-sm font-semibold text-accent-foreground">⭐ Rate your order</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Help us improve your experience</p>
+            </motion.button>
+          ) : (
+            <ReviewDialog
+              orderId={order.id}
+              restaurantId={order.restaurantId}
+              restaurantName={order.restaurantName}
+              onClose={() => setShowReview(false)}
+            />
+          )}
+        </div>
+      )}
+
       <BottomNav />
     </div>
   );
