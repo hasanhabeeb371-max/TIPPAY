@@ -21,7 +21,9 @@ const OrderTrackingPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getOrder } = useOrders();
+  const { getReviewForOrder } = useReviews();
   const order = getOrder(id || "");
+  const [showReview, setShowReview] = useState(false);
 
   if (!order) {
     return (
