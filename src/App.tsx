@@ -111,6 +111,7 @@ const App = () => {
                 </BrowserRouter>
               </TooltipProvider>
             </NotificationProvider>
+            </AddressProvider>
           </OrderProvider>
         </CartProvider>
       </AuthProvider>
