@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useOrders } from "@/context/OrderContext";
+import { useReviews } from "@/context/ReviewContext";
 import { ArrowLeft, Phone, CheckCircle2, CircleDot, ChefHat, Package, Truck, MapPin, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
+import ReviewDialog from "@/components/ReviewDialog";
 import type { OrderStatus } from "@/data/mockData";
 
 const STATUS_STEPS: { status: OrderStatus; label: string; icon: React.ElementType; description: string }[] = [
