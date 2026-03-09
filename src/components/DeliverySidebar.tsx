@@ -1,4 +1,5 @@
 import { Package, MapPin, Truck, User, LogOut, BarChart3 } from "lucide-react";
+import NotificationCenter from "@/components/NotificationCenter";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
