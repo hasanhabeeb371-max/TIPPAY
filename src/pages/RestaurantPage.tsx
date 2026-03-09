@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { restaurants } from "@/data/mockData";
 import { useCart } from "@/context/CartContext";
+import { useReviews } from "@/context/ReviewContext";
 import { ArrowLeft, Star, Clock, MapPin, Plus, Minus, Leaf, ShoppingCart, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
