@@ -13,6 +13,7 @@ import heroBanner from "@/assets/hero-banner.jpg";
 
 const HomePage = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
   const { selectedAddress } = useAddress();
