@@ -68,6 +68,16 @@ const AppRoutes = () => (
       <Route path="profile" element={<DeliveryProfile />} />
     </Route>
 
+    {/* Admin Dashboard */}
+    <Route path="/admin/dashboard" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+      <Route index element={<Navigate to="overview" replace />} />
+      <Route path="overview" element={<AdminOverview />} />
+      <Route path="restaurants" element={<AdminRestaurants />} />
+      <Route path="orders" element={<AdminOrders />} />
+      <Route path="agents" element={<AdminAgents />} />
+      <Route path="users" element={<AdminUsers />} />
+    </Route>
+
     <Route path="*" element={<NotFound />} />
   </Routes>
 );
