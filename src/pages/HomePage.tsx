@@ -6,6 +6,7 @@ import CategoryChip from "@/components/CategoryChip";
 import RestaurantCard from "@/components/RestaurantCard";
 import BottomNav from "@/components/BottomNav";
 import { useAuth } from "@/context/AuthContext";
+import { useAddress } from "@/context/AddressContext";
 import { motion } from "framer-motion";
 import heroBanner from "@/assets/hero-banner.jpg";
 
