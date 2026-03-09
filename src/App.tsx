@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
 import { AddressProvider } from "@/context/AddressContext";
+import { ReviewProvider } from "@/context/ReviewContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import SplashScreen from "./pages/SplashScreen";
 import Login from "./pages/Login";
