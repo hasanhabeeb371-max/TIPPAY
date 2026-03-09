@@ -21,6 +21,12 @@ import NearbyOrders from "./pages/delivery/NearbyOrders";
 import ActiveDelivery from "./pages/delivery/ActiveDelivery";
 import DeliveryStats from "./pages/delivery/DeliveryStats";
 import DeliveryProfile from "./pages/delivery/DeliveryProfile";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminOverview from "./pages/admin/AdminOverview";
+import AdminRestaurants from "./pages/admin/AdminRestaurants";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminAgents from "./pages/admin/AdminAgents";
+import AdminUsers from "./pages/admin/AdminUsers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
