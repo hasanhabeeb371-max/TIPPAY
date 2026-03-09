@@ -12,7 +12,9 @@ const RestaurantPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { items, addItem, updateQuantity, totalItems, totalPrice } = useCart();
+  const { getReviewsForRestaurant } = useReviews();
   const restaurant = restaurants.find((r) => r.id === id);
+  const restaurantReviews = restaurant ? getReviewsForRestaurant(restaurant.id) : [];
 
   if (!restaurant) {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Restaurant not found</div>;
