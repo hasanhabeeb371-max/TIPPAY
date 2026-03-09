@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { restaurants } from "@/data/mockData";
 import { useCart } from "@/context/CartContext";
+import { useReviews } from "@/context/ReviewContext";
 import { ArrowLeft, Star, Clock, MapPin, Plus, Minus, Leaf, ShoppingCart, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -11,7 +12,9 @@ const RestaurantPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { items, addItem, updateQuantity, totalItems, totalPrice } = useCart();
+  const { getReviewsForRestaurant } = useReviews();
   const restaurant = restaurants.find((r) => r.id === id);
+  const restaurantReviews = restaurant ? getReviewsForRestaurant(restaurant.id) : [];
 
   if (!restaurant) {
     return <div className="flex min-h-screen items-center justify-center text-muted-foreground">Restaurant not found</div>;
@@ -54,6 +57,34 @@ const RestaurantPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Reviews */}
+      {restaurantReviews.length > 0 && (
+        <div className="px-4 pt-4">
+          <h2 className="mb-3 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Reviews ({restaurantReviews.length})
+          </h2>
+          <div className="space-y-2">
+            {restaurantReviews.slice(0, 3).map((rev) => (
+              <div key={rev.id} className="rounded-xl bg-card p-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} size={10} className={s <= rev.foodRating ? "fill-accent text-accent" : "text-border"} />
+                    ))}
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">
+                    {rev.createdAt.toLocaleDateString()}
+                  </span>
+                </div>
+                {rev.comment && (
+                  <p className="mt-1 text-xs text-muted-foreground italic">"{rev.comment}"</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Menu */}
       <div className="px-4 pt-4">

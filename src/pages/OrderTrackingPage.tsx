@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useOrders } from "@/context/OrderContext";
+import { useReviews } from "@/context/ReviewContext";
 import { ArrowLeft, Phone, CheckCircle2, CircleDot, ChefHat, Package, Truck, MapPin, Clock } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
+import ReviewDialog from "@/components/ReviewDialog";
 import type { OrderStatus } from "@/data/mockData";
 
 const STATUS_STEPS: { status: OrderStatus; label: string; icon: React.ElementType; description: string }[] = [
@@ -18,7 +21,9 @@ const OrderTrackingPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getOrder } = useOrders();
+  const { getReviewForOrder } = useReviews();
   const order = getOrder(id || "");
+  const [showReview, setShowReview] = useState(false);
 
   if (!order) {
     return (
@@ -219,6 +224,30 @@ const OrderTrackingPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Review Section - shown after delivery */}
+      {isDelivered && (
+        <div className="mx-4 mt-6">
+          {!showReview && !getReviewForOrder(order.id) ? (
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              onClick={() => setShowReview(true)}
+              className="w-full rounded-2xl bg-accent/15 p-4 text-center transition-colors hover:bg-accent/25"
+            >
+              <p className="font-display text-sm font-semibold text-accent-foreground">⭐ Rate your order</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">Help us improve your experience</p>
+            </motion.button>
+          ) : (
+            <ReviewDialog
+              orderId={order.id}
+              restaurantId={order.restaurantId}
+              restaurantName={order.restaurantName}
+              onClose={() => setShowReview(false)}
+            />
+          )}
+        </div>
+      )}
 
       <BottomNav />
     </div>
