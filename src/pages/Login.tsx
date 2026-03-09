@@ -37,7 +37,7 @@ const Login = () => {
       // Detect role from email for redirect
       const role = email.endsWith("@tippay.admin.com") ? "admin"
         : email.endsWith("@tippay.agent.com") ? "delivery"
-        : email.includes("restaurant") ? "restaurant"
+        : email.endsWith("@tippay.restaurant.com") ? "restaurant"
         : "customer";
       navigate(getRedirectPath(role));
     }
@@ -113,6 +113,7 @@ const Login = () => {
 
         <div className="pt-2 text-center text-xs text-muted-foreground/60">
           <p>Demo: any email → Customer</p>
+          <p>rest@tippay.restaurant.com → Restaurant</p>
           <p>agent@tippay.agent.com → Delivery</p>
           <p>admin@tippay.admin.com → Admin</p>
         </div>

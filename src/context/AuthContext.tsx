@@ -22,7 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 function detectRole(email: string): UserRole {
   if (email.endsWith("@tippay.admin.com")) return "admin";
   if (email.endsWith("@tippay.agent.com")) return "delivery";
-  if (email.includes("restaurant")) return "restaurant";
+  if (email.endsWith("@tippay.restaurant.com")) return "restaurant";
   return "customer";
 }
 
