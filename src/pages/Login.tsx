@@ -37,7 +37,7 @@ const Login = () => {
       // Detect role from email for redirect
       const role = email.endsWith("@tippay.admin.com") ? "admin"
         : email.endsWith("@tippay.agent.com") ? "delivery"
-        : email.includes("restaurant") ? "restaurant"
+        : email.endsWith("@tippay.restaurant.com") ? "restaurant"
         : "customer";
       navigate(getRedirectPath(role));
     }
