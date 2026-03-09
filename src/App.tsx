@@ -58,6 +58,7 @@ const AppRoutes = () => (
     <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
     <Route path="/order/:id" element={<ProtectedRoute><OrderTrackingPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+    <Route path="/addresses" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
 
     {/* Restaurant Dashboard */}
     <Route path="/restaurant/dashboard" element={<ProtectedRoute><RestaurantLayout /></ProtectedRoute>}>
