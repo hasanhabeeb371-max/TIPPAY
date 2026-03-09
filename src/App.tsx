@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
+import { AddressProvider } from "@/context/AddressContext";
 import { NotificationProvider } from "@/context/NotificationContext";
 import SplashScreen from "./pages/SplashScreen";
 import Login from "./pages/Login";
@@ -17,6 +18,7 @@ import SearchPage from "./pages/SearchPage";
 import OrdersPage from "./pages/OrdersPage";
 import OrderTrackingPage from "./pages/OrderTrackingPage";
 import ProfilePage from "./pages/ProfilePage";
+import AddressPage from "./pages/AddressPage";
 import RestaurantLayout from "./pages/restaurant/RestaurantLayout";
 import OrderManagement from "./pages/restaurant/OrderManagement";
 import MenuEditor from "./pages/restaurant/MenuEditor";
@@ -56,6 +58,7 @@ const AppRoutes = () => (
     <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
     <Route path="/order/:id" element={<ProtectedRoute><OrderTrackingPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+    <Route path="/addresses" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
 
     {/* Restaurant Dashboard */}
     <Route path="/restaurant/dashboard" element={<ProtectedRoute><RestaurantLayout /></ProtectedRoute>}>
@@ -97,6 +100,7 @@ const App = () => {
       <AuthProvider>
         <CartProvider>
           <OrderProvider>
+            <AddressProvider>
             <NotificationProvider>
               <TooltipProvider>
                 <Toaster />
@@ -107,6 +111,7 @@ const App = () => {
                 </BrowserRouter>
               </TooltipProvider>
             </NotificationProvider>
+            </AddressProvider>
           </OrderProvider>
         </CartProvider>
       </AuthProvider>
