@@ -14,6 +14,7 @@ const HomePage = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
+  const { selectedAddress } = useAddress();
 
   const filtered = restaurants.filter((r) => {
     const matchCategory = !activeCategory || r.category === activeCategory;
