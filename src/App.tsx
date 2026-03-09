@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import { NotificationProvider } from "@/context/NotificationContext";
 import SplashScreen from "./pages/SplashScreen";
 import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
@@ -92,14 +93,16 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CartProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
+          <NotificationProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+              <BrowserRouter>
+                <AppRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+          </NotificationProvider>
         </CartProvider>
       </AuthProvider>
     </QueryClientProvider>

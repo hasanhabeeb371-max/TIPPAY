@@ -1,4 +1,5 @@
 import { Package, MapPin, Truck, User, LogOut, BarChart3 } from "lucide-react";
+import NotificationCenter from "@/components/NotificationCenter";
 import { NavLink } from "@/components/NavLink";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -40,11 +41,12 @@ export function DeliverySidebar() {
         <div className={`flex items-center gap-2 px-4 py-5 ${collapsed ? "justify-center px-2" : ""}`}>
           <img src={logo} alt="TIP PAY" className="h-8 w-8" />
           {!collapsed && (
-            <div>
+            <div className="flex-1">
               <h2 className="font-display text-sm font-bold text-foreground">TIP PAY</h2>
               <p className="text-[10px] text-muted-foreground">Delivery Agent</p>
             </div>
           )}
+          <NotificationCenter className={collapsed ? "" : ""} />
         </div>
 
         <SidebarGroup>
