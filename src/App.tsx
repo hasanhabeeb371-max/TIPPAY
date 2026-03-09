@@ -102,6 +102,7 @@ const App = () => {
         <CartProvider>
           <OrderProvider>
             <AddressProvider>
+            <ReviewProvider>
             <NotificationProvider>
               <TooltipProvider>
                 <Toaster />
@@ -112,6 +113,7 @@ const App = () => {
                 </BrowserRouter>
               </TooltipProvider>
             </NotificationProvider>
+            </ReviewProvider>
             </AddressProvider>
           </OrderProvider>
         </CartProvider>
