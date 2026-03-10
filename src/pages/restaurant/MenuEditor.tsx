@@ -180,6 +180,10 @@ const MenuEditor = () => {
               <Label className="text-sm">Category *</Label>
               <Input value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="e.g. Burgers, Sides, Beverages" />
             </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Image URL</Label>
+              <Input value={formData.image} onChange={(e) => setFormData({ ...formData, image: e.target.value })} placeholder="https://example.com/image.jpg" />
+            </div>
             <div className="flex items-center justify-between rounded-lg bg-muted/50 p-3">
               <div className="flex items-center gap-2">
                 <Leaf size={14} className="text-success" />
