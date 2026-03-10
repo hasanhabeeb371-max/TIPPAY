@@ -1,7 +1,9 @@
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, LogOut, ChevronRight, MapPin, Heart, HelpCircle } from "lucide-react";
+import { User, Mail, Phone, LogOut, ChevronRight, MapPin, Heart, HelpCircle, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import BottomNav from "@/components/BottomNav";
 import { motion } from "framer-motion";
 import { useAddress } from "@/context/AddressContext";
@@ -10,6 +12,18 @@ const ProfilePage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { addresses } = useAddress();
+
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains("dark"));
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
 
   const menuItems = [
     { icon: MapPin, label: "Saved Addresses", desc: `${addresses.length} saved address${addresses.length !== 1 ? "es" : ""}`, action: () => navigate("/addresses") },
