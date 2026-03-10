@@ -85,6 +85,22 @@ const ProfilePage = () => {
         ))}
       </div>
 
+      <div className="mx-4 mt-4">
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.15 }}
+          className="flex w-full items-center gap-3 rounded-xl bg-card p-4"
+        >
+          <Moon size={18} className="text-muted-foreground" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-card-foreground">Dark Mode</p>
+            <p className="text-xs text-muted-foreground">Switch to dark theme</p>
+          </div>
+          <Switch checked={isDark} onCheckedChange={setIsDark} />
+        </motion.div>
+      </div>
+
       <div className="mx-4 mt-6">
         <Button onClick={handleLogout} variant="outline" className="w-full border-destructive text-destructive hover:bg-destructive/10">
           <LogOut size={16} className="mr-2" />
