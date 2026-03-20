@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Bell, Check, CheckCheck, Trash2, Package, Tag, AlertTriangle, Info, Truck } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -14,11 +15,13 @@ const typeConfig: Record<Notification["type"], { icon: typeof Bell; color: strin
   alert: { icon: AlertTriangle, color: "text-destructive" },
 };
 
-const NotificationItem = ({ notification, onRead }: { notification: Notification; onRead: (id: string) => void }) => {
+const NotificationItem = forwardRef<HTMLButtonElement, { notification: Notification; onRead: (id: string) => void }>(
+  ({ notification, onRead }, ref) => {
   const { icon: Icon, color } = typeConfig[notification.type];
 
   return (
     <motion.button
+      ref={ref}
       layout
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
@@ -43,7 +46,8 @@ const NotificationItem = ({ notification, onRead }: { notification: Notification
       </div>
     </motion.button>
   );
-};
+});
+NotificationItem.displayName = "NotificationItem";
 
 interface NotificationBellProps {
   className?: string;

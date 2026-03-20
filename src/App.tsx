@@ -10,7 +10,11 @@ import { OrderProvider } from "@/context/OrderContext";
 import { AddressProvider } from "@/context/AddressContext";
 import { ReviewProvider } from "@/context/ReviewContext";
 import { NotificationProvider } from "@/context/NotificationContext";
+import { RestaurantProvider } from "@/context/RestaurantContext";
+import { LocationProvider } from "@/context/LocationContext";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 import SplashScreen from "./pages/SplashScreen";
+import Portal from "./pages/Portal";
 import Login from "./pages/Login";
 import HomePage from "./pages/HomePage";
 import RestaurantPage from "./pages/RestaurantPage";
@@ -20,6 +24,9 @@ import OrdersPage from "./pages/OrdersPage";
 import OrderTrackingPage from "./pages/OrderTrackingPage";
 import ProfilePage from "./pages/ProfilePage";
 import AddressPage from "./pages/AddressPage";
+import FavoritesPage from "./pages/FavoritesPage";
+import SettingsPage from "./pages/SettingsPage";
+import EditProfilePage from "./pages/EditProfilePage";
 import RestaurantLayout from "./pages/restaurant/RestaurantLayout";
 import OrderManagement from "./pages/restaurant/OrderManagement";
 import MenuEditor from "./pages/restaurant/MenuEditor";
@@ -45,21 +52,32 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AuthRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <Navigate to="/home" replace /> : <>{children}</>;
+  const { isAuthenticated, user } = useAuth();
+  
+  if (isAuthenticated && user) {
+    if (user.role === "admin") return <Navigate to="/admin/dashboard" replace />;
+    if (user.role === "restaurant") return <Navigate to="/restaurant/dashboard" replace />;
+    if (user.role === "delivery") return <Navigate to="/delivery/dashboard" replace />;
+    return <Navigate to="/home" replace />;
+  }
+  
+  return <>{children}</>;
 };
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<AuthRoute><Login /></AuthRoute>} />
+    <Route path="/" element={<AuthRoute><Portal /></AuthRoute>} />
+    <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
     <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
     <Route path="/restaurant/:id" element={<ProtectedRoute><RestaurantPage /></ProtectedRoute>} />
     <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
     <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
     <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-    <Route path="/order/:id" element={<ProtectedRoute><OrderTrackingPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/addresses" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
+    <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
+    <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+    <Route path="/settings/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
 
     {/* Restaurant Dashboard */}
     <Route path="/restaurant/dashboard" element={<ProtectedRoute><RestaurantLayout /></ProtectedRoute>}>
@@ -98,12 +116,15 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <CartProvider>
+      <LocationProvider>
+        <AuthProvider>
+          <FavoritesProvider>
+            <CartProvider>
           <OrderProvider>
             <AddressProvider>
             <ReviewProvider>
             <NotificationProvider>
+            <RestaurantProvider>
               <TooltipProvider>
                 <Toaster />
                 <Sonner />
@@ -112,14 +133,17 @@ const App = () => {
                   <AppRoutes />
                 </BrowserRouter>
               </TooltipProvider>
+            </RestaurantProvider>
             </NotificationProvider>
             </ReviewProvider>
             </AddressProvider>
           </OrderProvider>
         </CartProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  );
+      </FavoritesProvider>
+    </AuthProvider>
+  </LocationProvider>
+</QueryClientProvider>
+);
 };
 
 export default App;

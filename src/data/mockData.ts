@@ -5,6 +5,10 @@ import foodDosa from "@/assets/food-dosa.jpg";
 import foodDessert from "@/assets/food-dessert.jpg";
 import foodBeverages from "@/assets/food-beverages.jpg";
 import foodChinese from "@/assets/food-chinese.jpg";
+import foodIdli from "@/assets/food-idli.png";
+import foodIceCream from "@/assets/food-icecream.png";
+import foodSamosa from "@/assets/food-samosa.png";
+import foodChickenFry from "@/assets/food-chickenfry.png";
 
 export interface MenuItem {
   id: string;
@@ -27,6 +31,8 @@ export interface Restaurant {
   deliveryTime: string;
   isOpen: boolean;
   menu: MenuItem[];
+  lat?: number;
+  lng?: number;
 }
 
 export interface Order {
@@ -53,14 +59,80 @@ export interface Category {
   image: string;
 }
 
-export const categories: Category[] = [
-  { id: "1", name: "Fast Food", image: foodBurger },
-  { id: "2", name: "South Indian", image: foodDosa },
-  { id: "3", name: "North Indian", image: foodBiryani },
-  { id: "4", name: "Chinese", image: foodChinese },
-  { id: "5", name: "Desserts", image: foodDessert },
-  { id: "6", name: "Beverages", image: foodBeverages },
-  { id: "7", name: "Pizza", image: foodPizza },
+const allCategoriesNames = [
+  "Masala Maggi", "Pakoda", "Curd Rice", "Rajma Rice", "Parotta", "Non Veg Meals", "Halwa", "Pasta", "Shawarma", "Paneer Pakoda", "Malai Kofta", "Wings", "Pav Bhaji", "Sandwich", "Manchurian", "Cupcake", "Poori Bhaji",
+  "Idli", "Dosa", "Vada", "Biryani", "Poori", "Momos", "Thali", "Veg Meal", "Upma", "Pulao", "Fried Rice", "Chicken", "Paneer", "Pizza", "Burger", "Uttapam", "Mutton", "Korma",
+  "Fries", "Bhruji", "Sundae", "Kulche", "Kebabs", "Omelette", "Chaat", "Mushroom Curry", "Butter Chicken", "Kofta",
+  "Sweets", "Soup", "Milkshake", "Chowmein", "Samosa", "Bowl", "Keema", "Paratha", "Cheesecake", "Gulab Jamun", "Khichdi", "Bhel", "Chaap", "Chicken Soup", "Ice Cream", "Rajma", "Cold Coffee", "Pastry", "Dal", "Brownie",
+  "Coffee", "Lassi", "Chaach", "Juice"
+];
+
+const genericImages = [
+  foodBiryani,
+  foodBurger,
+  foodPizza,
+  foodDosa,
+  foodDessert,
+  foodBeverages,
+  foodChinese,
+  foodIdli,
+  foodIceCream,
+  foodSamosa,
+  foodChickenFry
+];
+
+export const categories: Category[] = allCategoriesNames.map((name, index) => {
+  let img = genericImages[index % genericImages.length];
+  
+  if (name === "Biryani") img = foodBiryani;
+  else if (name === "Idli") img = foodIdli;
+  else if (name === "Dosa") img = foodDosa;
+  else if (name === "Chicken" || name === "Wings") img = foodChickenFry;
+  else if (name === "Ice Cream") img = foodIceCream;
+  else if (name === "Burger") img = foodBurger;
+  else if (name === "Pizza") img = foodPizza;
+  else if (name === "Noodles" || name === "Chowmein") img = foodChinese;
+  else if (name === "Samosa") img = foodSamosa;
+  else if (name === "Desserts" || name === "Sweets" || name === "Halwa" || name === "Cupcake" || name === "Cheesecake" || name === "Gulab Jamun" || name === "Pastry" || name === "Brownie") img = foodDessert;
+  else if (name === "Beverages" || name === "Coffee" || name === "Cold Coffee" || name === "Juice" || name === "Milkshake" || name === "Lassi" || name === "Chaach") img = foodBeverages;
+  
+  return { id: (index + 1).toString(), name, image: img };
+});
+
+export interface HotDeal {
+  id: string;
+  title: string;
+  description: string;
+  discount: string;
+  image: string;
+  restaurantName: string;
+}
+
+export const hotDeals: HotDeal[] = [
+  {
+    id: "hd1",
+    title: "50% OFF on Classic Burgers",
+    description: "Get 50% off on all classic burgers up to ₹100",
+    discount: "50% OFF",
+    image: foodBurger,
+    restaurantName: "Burger Palace"
+  },
+  {
+    id: "hd2",
+    title: "Flat ₹150 OFF on Pizzas",
+    description: "Use code PIZZA150 on orders above ₹499",
+    discount: "₹150 OFF",
+    image: foodPizza,
+    restaurantName: "Pizza Hub"
+  },
+  {
+    id: "hd3",
+    title: "Buy 1 Get 1 Free on Biryani",
+    description: "Valid on all chicken and veg biryanis",
+    discount: "BOGO",
+    image: foodBiryani,
+    restaurantName: "Spice Garden"
+  }
 ];
 
 export const restaurants: Restaurant[] = [

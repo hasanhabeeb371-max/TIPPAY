@@ -1,8 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { restaurants } from "@/data/mockData";
+import { useRestaurants } from "@/context/RestaurantContext";
 import { useCart } from "@/context/CartContext";
 import { useReviews } from "@/context/ReviewContext";
-import { ArrowLeft, Star, Clock, MapPin, Plus, Minus, Leaf, ShoppingCart, Zap } from "lucide-react";
+import { ArrowLeft, Star, Clock, MapPin, Plus, Minus, Leaf, ShoppingCart, Zap, Heart } from "lucide-react";
+import { useFavorites } from "@/context/FavoritesContext";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -13,6 +14,9 @@ const RestaurantPage = () => {
   const navigate = useNavigate();
   const { items, addItem, updateQuantity, totalItems, totalPrice } = useCart();
   const { getReviewsForRestaurant } = useReviews();
+  const { restaurants } = useRestaurants();
+  const { toggleFoodFavorite, isFoodFavorite } = useFavorites();
+
   const restaurant = restaurants.find((r) => r.id === id);
   const restaurantReviews = restaurant ? getReviewsForRestaurant(restaurant.id) : [];
 
@@ -44,9 +48,9 @@ const RestaurantPage = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 to-transparent" />
         <button
           onClick={() => navigate(-1)}
-          className="absolute left-4 top-4 rounded-full bg-background/80 p-2 backdrop-blur-sm"
+          className="absolute left-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-transform hover:scale-105"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft size={18} className="text-foreground" />
         </button>
         <div className="absolute bottom-4 left-4">
           <h1 className="font-display text-2xl font-bold text-background">{restaurant.name}</h1>
@@ -102,9 +106,20 @@ const RestaurantPage = () => {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="flex gap-3 rounded-xl bg-card p-3"
+                      className="group flex gap-3 rounded-xl bg-card p-3 relative"
                     >
-                      <img src={item.image} alt={item.name} className="h-24 w-24 rounded-lg object-cover" />
+                      <div className="relative h-24 w-24 flex-shrink-0">
+                        <img src={item.image} alt={item.name} className="h-full w-full rounded-lg object-cover" />
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFoodFavorite(item.id);
+                          }}
+                          className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm transition-transform hover:scale-110 shadow-sm"
+                        >
+                          <Heart size={12} className={isFoodFavorite(item.id) ? "fill-accent text-accent" : "text-foreground"} />
+                        </button>
+                      </div>
                       <div className="flex flex-1 flex-col justify-between">
                         <div>
                           <div className="flex items-center gap-1.5">

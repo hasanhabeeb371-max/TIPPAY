@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Mail, Phone, LogOut, ChevronRight, MapPin, Heart, HelpCircle, Moon } from "lucide-react";
+import { User, Mail, Phone, LogOut, ChevronRight, MapPin, Heart, Moon, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import BottomNav from "@/components/BottomNav";
@@ -27,8 +27,8 @@ const ProfilePage = () => {
 
   const menuItems = [
     { icon: MapPin, label: "Saved Addresses", desc: `${addresses.length} saved address${addresses.length !== 1 ? "es" : ""}`, action: () => navigate("/addresses") },
-    { icon: Heart, label: "Favorites", desc: "Your favorite restaurants", action: () => {} },
-    { icon: HelpCircle, label: "Help & Support", desc: "Get help with orders", action: () => {} },
+    { icon: Heart, label: "Favorites", desc: "Your favorite restaurants", action: () => navigate("/favorites") },
+    { icon: Settings, label: "Settings", desc: "Manage your account preferences", action: () => navigate("/settings") },
   ];
 
   const handleLogout = () => {

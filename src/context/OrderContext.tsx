@@ -18,6 +18,7 @@ export interface LiveOrder {
   status: OrderStatus;
   placedAt: Date;
   estimatedDelivery: string;
+  paymentMethod: string;
   deliveryAgent?: { name: string; phone: string };
   statusHistory: { status: OrderStatus; time: Date }[];
 }

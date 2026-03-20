@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { adminRestaurants, type AdminRestaurant } from "@/data/adminMockData";
-import { Check, X, Ban, Eye, MapPin, Mail, Phone, FileText } from "lucide-react";
+import type { AdminRestaurant } from "@/data/adminMockData";
+import { useRestaurants } from "@/context/RestaurantContext";
+import { useAuth } from "@/context/AuthContext";
+import { Check, X, Ban, Eye, MapPin, Mail, Phone, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -15,7 +17,8 @@ const statusBadge: Record<string, { label: string; cls: string }> = {
 const tabs = ["All", "Pending", "Approved", "Suspended"] as const;
 
 const AdminRestaurants = () => {
-  const [restaurants, setRestaurants] = useState<AdminRestaurant[]>(adminRestaurants);
+  const { adminRestaurants: restaurants, updateAdminRestaurantStatus, addAdminRestaurant, deleteAdminRestaurant } = useRestaurants();
+  const { updateUserStatusByEmail } = useAuth();
   const [activeTab, setActiveTab] = useState<typeof tabs[number]>("All");
   const [viewing, setViewing] = useState<AdminRestaurant | null>(null);
 
@@ -24,18 +27,32 @@ const AdminRestaurants = () => {
   );
 
   const updateStatus = (id: string, status: AdminRestaurant["status"]) => {
-    setRestaurants((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+    const restaurant = restaurants.find(r => r.id === id);
+    if (restaurant) {
+      updateUserStatusByEmail(restaurant.email, status === "approved" ? "active" : status === "suspended" ? "suspended" : "pending");
+    }
+    updateAdminRestaurantStatus(id, status);
     const actionMap = { approved: "approved", suspended: "suspended", pending: "set to pending" };
     toast.success(`Restaurant ${actionMap[status]}`);
   };
 
+  const handleDelete = (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to completely delete ${name}?`)) {
+      deleteAdminRestaurant(id);
+      toast.success(`${name} has been deleted.`);
+      if (viewing?.id === id) setViewing(null);
+    }
+  };
+
   return (
     <div>
-      <div className="mb-6">
-        <h2 className="font-display text-xl font-bold text-foreground">Restaurant Management</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {restaurants.filter((r) => r.status === "pending").length} pending approvals
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h2 className="font-display text-xl font-bold text-foreground">Restaurant Management</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {restaurants.filter((r) => r.status === "pending").length} pending approvals
+          </p>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -97,6 +114,9 @@ const AdminRestaurants = () => {
                   {r.status === "suspended" && (
                     <button onClick={() => updateStatus(r.id, "approved")} className="rounded-lg p-2 text-success hover:bg-success/10"><Check size={14} /></button>
                   )}
+                  <button onClick={() => handleDelete(r.id, r.name)} className="rounded-lg p-2 text-destructive hover:bg-destructive/10" title="Delete Restaurant">
+                    <Trash2 size={14} />
+                  </button>
                 </div>
               </motion.div>
             );
@@ -144,6 +164,7 @@ const AdminRestaurants = () => {
           )}
         </DialogContent>
       </Dialog>
+
     </div>
   );
 };

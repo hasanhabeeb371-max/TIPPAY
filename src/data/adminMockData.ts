@@ -17,6 +17,8 @@ export interface AdminRestaurant {
   category: string;
   status: "pending" | "approved" | "suspended";
   appliedDate: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface AdminOrder {

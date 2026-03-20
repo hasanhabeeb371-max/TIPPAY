@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { restaurants } from "@/data/mockData";
+import { useRestaurants } from "@/context/RestaurantContext";
 import RestaurantCard from "@/components/RestaurantCard";
 import BottomNav from "@/components/BottomNav";
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState<"rating" | "distance" | "name">("rating");
+  const { restaurants } = useRestaurants();
 
   const filtered = restaurants
     .filter((r) => {

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { mockMenuItems, type RestaurantMenuItem } from "@/data/restaurantMockData";
+import type { RestaurantMenuItem } from "@/data/restaurantMockData";
+import { useRestaurants } from "@/context/RestaurantContext";
 import { Plus, Pencil, Trash2, Leaf, X, Save, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ const emptyItem: Omit<RestaurantMenuItem, "id"> = {
 };
 
 const MenuEditor = () => {
-  const [menuItems, setMenuItems] = useState<RestaurantMenuItem[]>(mockMenuItems);
+  const { menuItems, addMenuItem, updateMenuItem, deleteMenuItem, toggleMenuItemAvailability } = useRestaurants();
   const [editingItem, setEditingItem] = useState<RestaurantMenuItem | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState(emptyItem);
@@ -52,16 +53,14 @@ const MenuEditor = () => {
     }
 
     if (editingItem) {
-      setMenuItems((prev) =>
-        prev.map((i) => (i.id === editingItem.id ? { ...formData, id: editingItem.id } as RestaurantMenuItem : i))
-      );
+      updateMenuItem({ ...formData, id: editingItem.id } as RestaurantMenuItem);
       toast.success(`${formData.name} updated`);
     } else {
       const newItem: RestaurantMenuItem = {
         ...formData,
         id: `m-new-${Date.now()}`,
       } as RestaurantMenuItem;
-      setMenuItems((prev) => [...prev, newItem]);
+      addMenuItem(newItem);
       toast.success(`${formData.name} added to menu`);
     }
     setIsAdding(false);
@@ -69,14 +68,12 @@ const MenuEditor = () => {
   };
 
   const handleDelete = (id: string) => {
-    setMenuItems((prev) => prev.filter((i) => i.id !== id));
+    deleteMenuItem(id);
     toast.success("Item removed from menu");
   };
 
   const toggleAvailability = (id: string) => {
-    setMenuItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, isAvailable: !i.isAvailable } : i))
-    );
+    toggleMenuItemAvailability(id);
   };
 
   return (

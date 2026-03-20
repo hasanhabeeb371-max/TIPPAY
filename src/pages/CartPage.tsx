@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { useOrders } from "@/context/OrderContext";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, Tag, X, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, Tag, X, CheckCircle2, Wallet, CreditCard, Banknote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,6 +25,32 @@ const PROMO_CODES: PromoCode[] = [
   { code: "SAVE25", type: "percent", value: 25, minOrder: 250, maxDiscount: 200, label: "25% off up to ₹200" },
 ];
 
+const GPayIcon = ({ size = 24, ...props }: any) => (
+  <svg viewBox="0 0 120 120" width={size} height={size} {...props}>
+    <rect width="120" height="120" rx="24" fill="#ffffff" stroke="#e2e8f0" strokeWidth="2" />
+    <g transform="translate(36, 36)">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.13 30.52 0 24 0 14.78 0 6.73 5.38 2.59 13.25l7.98 6.19C12.59 13.58 17.84 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.98 24.52c0-1.63-.16-3.2-.45-4.74H24v9.06h12.98c-.59 3.09-2.28 5.71-4.8 7.42l7.74 6c4.54-4.18 7.06-10.35 7.06-17.74z"/>
+      <path fill="#FBBC05" d="M10.57 28.5c-1.03-3.05-1.03-6.38 0-9.43l-7.98-6.19c-3.46 6.91-3.46 15.11 0 22.02l7.98-6.4z"/>
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.77l-7.74-6c-2.15 1.44-4.91 2.27-8.15 2.27-6.16 0-11.41-4.08-13.43-9.94l-7.98 6.4C6.73 42.62 14.78 48 24 48z"/>
+    </g>
+  </svg>
+);
+
+const PhonePeIcon = ({ size = 24, ...props }: any) => (
+  <svg viewBox="0 0 120 120" width={size} height={size} {...props}>
+    <rect width="120" height="120" rx="24" fill="#5f259f" />
+    <text x="60" y="82" fontFamily="sans-serif" fontSize="72" fontWeight="bold" fill="#ffffff" textAnchor="middle">पे</text>
+  </svg>
+);
+
+const PAYMENT_METHODS = [
+  { id: "cod", name: "Cash on Delivery", icon: Banknote },
+  { id: "gpay", name: "Google Pay", icon: GPayIcon },
+  { id: "phonepe", name: "PhonePe", icon: PhonePeIcon },
+  { id: "upi", name: "UPI", icon: CreditCard },
+];
+
 const CartPage = () => {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();
   const { placeOrder } = useOrders();
@@ -33,6 +59,8 @@ const CartPage = () => {
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
   const [promoError, setPromoError] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
+  const [upiId, setUpiId] = useState("");
 
   const deliveryFee = items.length > 0 ? 30 : 0;
 
@@ -43,7 +71,9 @@ const CartPage = () => {
     return appliedPromo.maxDiscount ? Math.min(raw, appliedPromo.maxDiscount) : raw;
   })();
 
-  const grandTotal = Math.max(0, totalPrice - discount + deliveryFee);
+  const codFee = paymentMethod === "Cash on Delivery" ? 30 : 0;
+
+  const grandTotal = Math.max(0, totalPrice - discount + deliveryFee + codFee);
 
   const handleApplyPromo = () => {
     setPromoError("");
@@ -77,6 +107,12 @@ const CartPage = () => {
 
   const handleCheckout = () => {
     if (items.length === 0) return;
+
+    if (paymentMethod === "UPI" && !upiId.trim()) {
+      toast.error("Please enter your UPI ID");
+      return;
+    }
+
     const restaurantName = items[0].restaurantName;
     const restaurantId = items[0].restaurantId;
     const orderId = placeOrder({
@@ -91,6 +127,7 @@ const CartPage = () => {
       totalPrice: grandTotal,
       deliveryFee,
       estimatedDelivery: "25-35 min",
+      paymentMethod,
     });
     clearCart();
     setAppliedPromo(null);
@@ -230,6 +267,54 @@ const CartPage = () => {
             </AnimatePresence>
           </div>
 
+          {/* Payment Method */}
+          <div className="mt-4 rounded-xl bg-card p-4">
+            <h3 className="mb-3 text-sm font-semibold text-card-foreground">Payment Method</h3>
+            <div className="space-y-2">
+              {PAYMENT_METHODS.map((method) => {
+                const Icon = method.icon;
+                const isSelected = paymentMethod === method.name;
+                return (
+                  <div key={method.id} className="w-full">
+                    <button
+                      onClick={() => setPaymentMethod(method.name)}
+                      className={`flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors ${
+                        isSelected ? "border-accent bg-accent/5" : "border-border bg-background hover:bg-muted/50"
+                      }`}
+                    >
+                      <Icon size={18} className={isSelected ? "text-accent" : "text-muted-foreground"} />
+                      <div className="flex flex-1 flex-col">
+                        <span className={`text-sm font-medium ${isSelected ? "text-foreground" : "text-muted-foreground"}`}>
+                          {method.name}
+                        </span>
+                        {method.id === "cod" && (
+                          <span className="text-[10px] text-muted-foreground">
+                            + ₹30 extra charge
+                          </span>
+                        )}
+                      </div>
+                      {isSelected && <CheckCircle2 size={16} className="ml-auto text-accent" />}
+                    </button>
+                    {isSelected && method.id === "upi" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                        animate={{ opacity: 1, height: "auto", marginTop: 8 }}
+                        className="overflow-hidden"
+                      >
+                        <Input
+                          value={upiId}
+                          onChange={(e) => setUpiId(e.target.value)}
+                          placeholder="Enter your UPI ID (e.g., name@okbank)"
+                          className="h-10 text-sm bg-background border-border/60 focus-visible:ring-accent"
+                        />
+                      </motion.div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Summary */}
           <div className="mt-4 space-y-2 rounded-xl bg-card p-4">
             <div className="flex justify-between text-sm">
@@ -250,6 +335,16 @@ const CartPage = () => {
               <span className="text-muted-foreground">Delivery Fee</span>
               <span className="text-card-foreground">₹{deliveryFee}</span>
             </div>
+            {codFee > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="flex justify-between text-sm"
+              >
+                <span className="text-muted-foreground">COD Charge</span>
+                <span className="text-card-foreground">₹{codFee}</span>
+              </motion.div>
+            )}
             <div className="border-t border-border pt-2">
               <div className="flex justify-between text-base font-bold">
                 <span>Total</span>
