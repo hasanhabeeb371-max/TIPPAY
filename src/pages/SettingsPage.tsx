@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { User, Bell, Smartphone, ChevronLeft, ChevronRight } from "lucide-react";
+import { User, Bell, Smartphone, HelpCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
@@ -8,8 +8,9 @@ const SettingsPage = () => {
 
   const settingItems = [
     { icon: User, label: "Edit Profile", desc: "Change your personal details", action: () => navigate("/settings/edit-profile") },
-    { icon: Bell, label: "Notification Settings", desc: "Manage alerts and updates", action: () => {} },
-    { icon: Smartphone, label: "App Permissions", desc: "Location and camera access", action: () => {} },
+    { icon: Bell, label: "Notification Settings", desc: "Manage alerts and updates", action: () => navigate("/settings/notifications") },
+    { icon: Smartphone, label: "App Permissions", desc: "Location and camera access", action: () => navigate("/settings/permissions") },
+    { icon: HelpCircle, label: "Help and Support", desc: "Get help and find answers", action: () => {} },
   ];
 
   return (

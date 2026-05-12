@@ -6,24 +6,9 @@ import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, Tag, X, CheckCircle2, Wall
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
+import { mockCoupons, Coupon } from "@/data/mockData";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
-
-interface PromoCode {
-  code: string;
-  type: "percent" | "flat";
-  value: number;
-  minOrder: number;
-  maxDiscount?: number;
-  label: string;
-}
-
-const PROMO_CODES: PromoCode[] = [
-  { code: "WELCOME50", type: "percent", value: 50, minOrder: 200, maxDiscount: 150, label: "50% off up to ₹150" },
-  { code: "FLAT100", type: "flat", value: 100, minOrder: 300, label: "₹100 off on orders above ₹300" },
-  { code: "TIPFIRST", type: "percent", value: 30, minOrder: 150, maxDiscount: 100, label: "30% off up to ₹100" },
-  { code: "SAVE25", type: "percent", value: 25, minOrder: 250, maxDiscount: 200, label: "25% off up to ₹200" },
-];
 
 const GPayIcon = ({ size = 24, ...props }: any) => (
   <svg viewBox="0 0 120 120" width={size} height={size} {...props}>
@@ -57,7 +42,7 @@ const CartPage = () => {
   const navigate = useNavigate();
 
   const [promoInput, setPromoInput] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
+  const [appliedPromo, setAppliedPromo] = useState<Coupon | null>(null);
   const [promoError, setPromoError] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [upiId, setUpiId] = useState("");
@@ -66,9 +51,9 @@ const CartPage = () => {
 
   const discount = (() => {
     if (!appliedPromo) return 0;
-    if (appliedPromo.type === "flat") return appliedPromo.value;
-    const raw = (totalPrice * appliedPromo.value) / 100;
-    return appliedPromo.maxDiscount ? Math.min(raw, appliedPromo.maxDiscount) : raw;
+    if (appliedPromo.type === "fixed") return appliedPromo.discount;
+    const raw = (totalPrice * appliedPromo.discount) / 100;
+    return raw;
   })();
 
   const codFee = paymentMethod === "Cash on Delivery" ? 30 : 0;
@@ -79,25 +64,33 @@ const CartPage = () => {
     setPromoError("");
     const code = promoInput.trim().toUpperCase();
     if (!code) {
-      setPromoError("Please enter a promo code");
+      setPromoError("Please enter a coupon code");
       return;
     }
     if (code.length > 20) {
-      setPromoError("Invalid promo code");
+      setPromoError("Invalid coupon code");
       return;
     }
-    const promo = PROMO_CODES.find((p) => p.code === code);
+    const promo = mockCoupons.find((p) => p.code === code);
     if (!promo) {
-      setPromoError("Invalid promo code");
+      setPromoError("Invalid coupon code");
       return;
     }
-    if (totalPrice < promo.minOrder) {
-      setPromoError(`Minimum order ₹${promo.minOrder} required`);
+    if (!promo.isActive) {
+      setPromoError("This coupon is currently inactive");
+      return;
+    }
+    if (new Date(promo.validUntil) < new Date()) {
+      setPromoError("This coupon has expired");
+      return;
+    }
+    if (totalPrice < promo.minOrderValue) {
+      setPromoError(`Minimum order ₹${promo.minOrderValue} required`);
       return;
     }
     setAppliedPromo(promo);
     setPromoInput("");
-    toast.success(`Promo "${promo.code}" applied!`);
+    toast.success(`Coupon "${promo.code}" applied!`);
   };
 
   const handleRemovePromo = () => {
@@ -126,6 +119,7 @@ const CartPage = () => {
       })),
       totalPrice: grandTotal,
       deliveryFee,
+      discount: discount > 0 ? discount : undefined,
       estimatedDelivery: "25-35 min",
       paymentMethod,
     });
@@ -188,11 +182,11 @@ const CartPage = () => {
             ))}
           </AnimatePresence>
 
-          {/* Promo Code Section */}
+          {/* Coupon Code Section */}
           <div className="mt-4 rounded-xl bg-card p-4">
             <div className="flex items-center gap-2 text-sm font-semibold text-card-foreground">
               <Tag size={14} className="text-accent" />
-              Promo Code
+              Coupon Code
             </div>
 
             <AnimatePresence mode="wait">
@@ -208,7 +202,9 @@ const CartPage = () => {
                     <CheckCircle2 size={16} className="text-success" />
                     <div>
                       <p className="text-xs font-bold text-card-foreground">{appliedPromo.code}</p>
-                      <p className="text-[10px] text-muted-foreground">{appliedPromo.label} · Saving ₹{Math.round(discount)}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {appliedPromo.type === "percentage" ? `${appliedPromo.discount}% off` : `₹${appliedPromo.discount} off`} · Saving ₹{Math.round(discount)}
+                      </p>
                     </div>
                   </div>
                   <button onClick={handleRemovePromo} className="rounded-full p-1 text-muted-foreground hover:text-destructive">
@@ -252,7 +248,7 @@ const CartPage = () => {
                     </motion.p>
                   )}
                   <div className="mt-2.5 flex flex-wrap gap-1.5">
-                    {PROMO_CODES.slice(0, 3).map((p) => (
+                    {mockCoupons.filter(c => c.isActive).slice(0, 3).map((p) => (
                       <button
                         key={p.code}
                         onClick={() => { setPromoInput(p.code); setPromoError(""); }}

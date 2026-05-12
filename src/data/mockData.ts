@@ -40,6 +40,7 @@ export interface Order {
   restaurantName: string;
   items: { name: string; quantity: number; price: number }[];
   totalPrice: number;
+  discount?: number;
   status: OrderStatus;
   date: string;
   time: string;
@@ -59,43 +60,71 @@ export interface Category {
   image: string;
 }
 
-const allCategoriesNames = [
-  "Masala Maggi", "Pakoda", "Curd Rice", "Rajma Rice", "Parotta", "Non Veg Meals", "Halwa", "Pasta", "Shawarma", "Paneer Pakoda", "Malai Kofta", "Wings", "Pav Bhaji", "Sandwich", "Manchurian", "Cupcake", "Poori Bhaji",
-  "Idli", "Dosa", "Vada", "Biryani", "Poori", "Momos", "Thali", "Veg Meal", "Upma", "Pulao", "Fried Rice", "Chicken", "Paneer", "Pizza", "Burger", "Uttapam", "Mutton", "Korma",
-  "Fries", "Bhruji", "Sundae", "Kulche", "Kebabs", "Omelette", "Chaat", "Mushroom Curry", "Butter Chicken", "Kofta",
-  "Sweets", "Soup", "Milkshake", "Chowmein", "Samosa", "Bowl", "Keema", "Paratha", "Cheesecake", "Gulab Jamun", "Khichdi", "Bhel", "Chaap", "Chicken Soup", "Ice Cream", "Rajma", "Cold Coffee", "Pastry", "Dal", "Brownie",
-  "Coffee", "Lassi", "Chaach", "Juice"
+export const allCategoriesNames = [
+  "Idli", "Dosa", "Vada", "Upma", "Uttapam", // Breakfast / South Indian
+  "Biryani", "Pulao", "Fried Rice", "Veg Meal", "Thali", "Curd Rice", // Rice & Main Meals
+  "Poori", "Poori Bhaji", "Paratha", "Parotta", "Kulche", "Rolls", // Breads & Combos
+  "Chicken", "Paneer", "Korma", "Dal", "Kofta", "Malai Kofta", "Mushroom Curry", "Bhurji", // Curries & Gravies
+  "Pakoda", "Bhel", "Chaat", "Kebabs", "Chowmein", "Manchurian", // Snacks & Street Food
+  "Omelette", "Masala Puri", "Masala Maggi", // Breakfast / Quick Bites
+  "Sweets", "Gulab Jamun", "Ice Cream", "Sundae", // Desserts
+  "Juice", "Milkshake", "Lassi", // Drinks
+  "Soup", "Bowl" // Others
 ];
 
 const genericImages = [
-  foodBiryani,
-  foodBurger,
-  foodPizza,
-  foodDosa,
-  foodDessert,
-  foodBeverages,
-  foodChinese,
-  foodIdli,
-  foodIceCream,
-  foodSamosa,
-  foodChickenFry
+  foodBiryani, foodBurger, foodPizza, foodDosa, foodDessert,
+  foodBeverages, foodChinese, foodIdli, foodIceCream, foodSamosa, foodChickenFry
 ];
 
+const specificImages: Record<string, string> = {
+  "Idli": foodIdli,
+  "Dosa": foodDosa,
+  "Vada": foodDosa,
+  "Upma": foodDosa,
+  "Uttapam": foodDosa,
+  "Biryani": foodBiryani,
+  "Pulao": foodBiryani,
+  "Fried Rice": foodBiryani,
+  "Veg Meal": foodBiryani,
+  "Thali": foodBiryani,
+  "Curd Rice": foodBiryani,
+  "Poori": foodPizza,
+  "Poori Bhaji": foodPizza,
+  "Paratha": foodPizza,
+  "Parotta": foodPizza,
+  "Kulche": foodPizza,
+  "Rolls": foodBurger,
+  "Chicken": foodChickenFry,
+  "Paneer": foodChickenFry,
+  "Korma": foodChickenFry,
+  "Dal": foodChickenFry,
+  "Kofta": foodChickenFry,
+  "Malai Kofta": foodChickenFry,
+  "Mushroom Curry": foodChickenFry,
+  "Bhurji": foodChickenFry,
+  "Pakoda": foodSamosa,
+  "Bhel": foodSamosa,
+  "Chaat": foodSamosa,
+  "Kebabs": foodChickenFry,
+  "Chowmein": foodChinese,
+  "Manchurian": foodChinese,
+  "Omelette": foodSamosa,
+  "Masala Puri": foodSamosa,
+  "Masala Maggi": foodChinese,
+  "Sweets": foodDessert,
+  "Gulab Jamun": foodDessert,
+  "Ice Cream": foodIceCream,
+  "Sundae": foodIceCream,
+  "Juice": foodBeverages,
+  "Milkshake": foodBeverages,
+  "Lassi": foodBeverages,
+  "Soup": foodChinese,
+  "Bowl": foodChinese
+};
+
 export const categories: Category[] = allCategoriesNames.map((name, index) => {
-  let img = genericImages[index % genericImages.length];
-  
-  if (name === "Biryani") img = foodBiryani;
-  else if (name === "Idli") img = foodIdli;
-  else if (name === "Dosa") img = foodDosa;
-  else if (name === "Chicken" || name === "Wings") img = foodChickenFry;
-  else if (name === "Ice Cream") img = foodIceCream;
-  else if (name === "Burger") img = foodBurger;
-  else if (name === "Pizza") img = foodPizza;
-  else if (name === "Noodles" || name === "Chowmein") img = foodChinese;
-  else if (name === "Samosa") img = foodSamosa;
-  else if (name === "Desserts" || name === "Sweets" || name === "Halwa" || name === "Cupcake" || name === "Cheesecake" || name === "Gulab Jamun" || name === "Pastry" || name === "Brownie") img = foodDessert;
-  else if (name === "Beverages" || name === "Coffee" || name === "Cold Coffee" || name === "Juice" || name === "Milkshake" || name === "Lassi" || name === "Chaach") img = foodBeverages;
-  
+  const img = specificImages[name] || genericImages[index % genericImages.length];
   return { id: (index + 1).toString(), name, image: img };
 });
 
@@ -271,3 +300,26 @@ export const mockOrders: Order[] = [
     time: "8:00 PM",
   },
 ];
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discount: number;
+  type: "percentage" | "fixed";
+  minOrderValue: number;
+  isActive: boolean;
+  validUntil: string;
+}
+
+export let mockCoupons: Coupon[] = (() => {
+  const stored = localStorage.getItem("tippay_coupons");
+  return stored ? JSON.parse(stored) : [
+    { id: "c1", code: "WELCOME50", discount: 50, type: "percentage", minOrderValue: 199, isActive: true, validUntil: "2026-12-31" },
+    { id: "c2", code: "FLAT100", discount: 100, type: "fixed", minOrderValue: 499, isActive: false, validUntil: "2026-05-01" },
+  ];
+})();
+
+export const saveMockCoupons = (coupons: Coupon[]) => {
+  mockCoupons = coupons;
+  localStorage.setItem("tippay_coupons", JSON.stringify(coupons));
+};

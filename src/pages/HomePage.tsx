@@ -18,6 +18,7 @@ import heroBanner from "@/assets/hero-banner.jpg";
 const HomePage = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showAllCategories, setShowAllCategories] = useState(false);
+
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
@@ -26,8 +27,15 @@ const HomePage = () => {
   const { userLocation, isDetecting, detectLocation } = useLocationContext();
 
   const filtered = restaurants.filter((r) => {
-    const matchCategory = !activeCategory || r.category === activeCategory;
-    const matchSearch = !searchQuery || r.name.toLowerCase().includes(searchQuery.toLowerCase()) || r.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchCategory = !activeCategory || 
+      r.category === activeCategory || 
+      r.menu.some(m => m.category === activeCategory || m.name.toLowerCase().includes(activeCategory.toLowerCase()));
+      
+    const matchSearch = !searchQuery || 
+      r.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      r.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.menu.some(m => m.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
     return matchCategory && matchSearch;
   });
 
@@ -147,7 +155,13 @@ const HomePage = () => {
               
               <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x mt-1">
                 {r.menu.length > 0 ? (
-                  r.menu.map((item) => (
+                  r.menu
+                    .filter((item) => {
+                      const matchesCat = !activeCategory || r.category === activeCategory || item.category === activeCategory || item.name.toLowerCase().includes(activeCategory.toLowerCase());
+                      const matchesSearch = !searchQuery || r.name.toLowerCase().includes(searchQuery.toLowerCase()) || r.category.toLowerCase().includes(searchQuery.toLowerCase()) || item.name.toLowerCase().includes(searchQuery.toLowerCase());
+                      return matchesCat && matchesSearch;
+                    })
+                    .map((item) => (
                     <div key={item.id} className="min-w-[140px] snap-start rounded-xl bg-card border border-border/50 overflow-hidden shadow-sm flex flex-col cursor-pointer" onClick={() => navigate(`/restaurant/${r.id}`)}>
                       <div className="h-28 w-full bg-muted">
                         {item.image ? (

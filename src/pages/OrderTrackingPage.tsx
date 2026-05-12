@@ -218,9 +218,15 @@ const OrderTrackingPage = () => {
             <span>Delivery Fee</span>
             <span>₹{order.deliveryFee}</span>
           </div>
+          {order.discount && order.discount > 0 ? (
+            <div className="mt-1 flex justify-between text-xs text-success">
+              <span>Coupon Discount</span>
+              <span>-₹{Math.round(order.discount)}</span>
+            </div>
+          ) : null}
           <div className="mt-1 flex justify-between text-sm font-bold text-card-foreground">
             <span>Total</span>
-            <span>₹{order.totalPrice}</span>
+            <span>₹{Math.round(order.totalPrice)}</span>
           </div>
         </div>
       </div>

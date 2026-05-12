@@ -15,6 +15,7 @@ export interface LiveOrder {
   items: OrderItem[];
   totalPrice: number;
   deliveryFee: number;
+  discount?: number;
   status: OrderStatus;
   placedAt: Date;
   estimatedDelivery: string;

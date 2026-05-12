@@ -1,4 +1,4 @@
-import { ClipboardList, UtensilsCrossed, BarChart3, LogOut, Store } from "lucide-react";
+import { ClipboardList, UtensilsCrossed, BarChart3, LogOut, Store, Ticket } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,6 +20,7 @@ import {
 const items = [
   { title: "Orders", url: "/restaurant/dashboard/orders", icon: ClipboardList },
   { title: "Menu Editor", url: "/restaurant/dashboard/menu", icon: UtensilsCrossed },
+  { title: "Coupons", url: "/restaurant/dashboard/coupons", icon: Ticket },
   { title: "Analytics", url: "/restaurant/dashboard/analytics", icon: BarChart3 },
 ];
 

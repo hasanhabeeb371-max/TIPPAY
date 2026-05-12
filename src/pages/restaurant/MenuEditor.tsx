@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { RestaurantMenuItem } from "@/data/restaurantMockData";
+import { allCategoriesNames } from "@/data/mockData";
 import { useRestaurants } from "@/context/RestaurantContext";
 import { Plus, Pencil, Trash2, Leaf, X, Save, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -175,7 +176,16 @@ const MenuEditor = () => {
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm">Category *</Label>
-              <Input value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} placeholder="e.g. Burgers, Sides, Beverages" />
+              <select
+                value={formData.category}
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              >
+                <option value="" disabled>Select category</option>
+                {allCategoriesNames.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
             </div>
             <div className="space-y-1.5">
               <Label className="text-sm">Image URL</Label>

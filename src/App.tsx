@@ -27,10 +27,13 @@ import AddressPage from "./pages/AddressPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import SettingsPage from "./pages/SettingsPage";
 import EditProfilePage from "./pages/EditProfilePage";
+import NotificationSettingsPage from "./pages/NotificationSettingsPage";
+import AppPermissionsPage from "./pages/AppPermissionsPage";
 import RestaurantLayout from "./pages/restaurant/RestaurantLayout";
 import OrderManagement from "./pages/restaurant/OrderManagement";
 import MenuEditor from "./pages/restaurant/MenuEditor";
 import RestaurantAnalytics from "./pages/restaurant/RestaurantAnalytics";
+import CouponManagement from "./pages/restaurant/CouponManagement";
 import DeliveryLayout from "./pages/delivery/DeliveryLayout";
 import NearbyOrders from "./pages/delivery/NearbyOrders";
 import ActiveDelivery from "./pages/delivery/ActiveDelivery";
@@ -78,12 +81,15 @@ const AppRoutes = () => (
     <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
     <Route path="/settings/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
+    <Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />
+    <Route path="/settings/permissions" element={<ProtectedRoute><AppPermissionsPage /></ProtectedRoute>} />
 
     {/* Restaurant Dashboard */}
     <Route path="/restaurant/dashboard" element={<ProtectedRoute><RestaurantLayout /></ProtectedRoute>}>
       <Route index element={<Navigate to="orders" replace />} />
       <Route path="orders" element={<OrderManagement />} />
       <Route path="menu" element={<MenuEditor />} />
+      <Route path="coupons" element={<CouponManagement />} />
       <Route path="analytics" element={<RestaurantAnalytics />} />
     </Route>
 

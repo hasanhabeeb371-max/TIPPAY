@@ -48,8 +48,12 @@ const ProfilePage = () => {
         className="mx-4 mt-4 rounded-2xl bg-card p-5"
       >
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/20">
-            <User size={24} className="text-accent" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-accent/20 overflow-hidden">
+            {user?.image ? (
+              <img src={user.image} alt="Profile" className="h-full w-full object-cover" />
+            ) : (
+              <User size={24} className="text-accent" />
+            )}
           </div>
           <div>
             <h2 className="font-display text-lg font-bold text-card-foreground">{user?.name || "Guest"}</h2>
