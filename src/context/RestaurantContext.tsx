@@ -1,9 +1,22 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import type { Restaurant, MenuItem } from "@/data/mockData";
+import { restaurants as mockRestaurants } from "@/data/mockData";
 import type { AdminRestaurant } from "@/data/adminMockData";
 import type { RestaurantMenuItem } from "@/data/restaurantMockData";
+import { USE_MOCK_DATA } from "@/config/mockMode";
+import { getSeedAdminRestaurants, getSeedMenuItems } from "@/data/seedMockData";
 import { useLocationContext } from "@/context/LocationContext";
 import { getDistance, generateRandomCoordinates } from "@/utils/distance";
+
+function readStored<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
 
 interface RestaurantContextType {
   restaurants: Restaurant[];
@@ -21,15 +34,16 @@ interface RestaurantContextType {
 const RestaurantContext = createContext<RestaurantContextType | undefined>(undefined);
 
 export function RestaurantProvider({ children }: { children: ReactNode }) {
-  // Start completely empty to remove ALL demo items
   const [adminRestaurants, setAdminRestaurants] = useState<AdminRestaurant[]>(() => {
-    const saved = localStorage.getItem("tippay_admin_restaurants");
-    return saved ? JSON.parse(saved) : [];
+    const saved = readStored<AdminRestaurant[]>("tippay_admin_restaurants");
+    if (saved !== null && (saved.length > 0 || !USE_MOCK_DATA)) return saved;
+    return USE_MOCK_DATA ? getSeedAdminRestaurants() : [];
   });
-  
+
   const [menuItems, setMenuItems] = useState<RestaurantMenuItem[]>(() => {
-    const saved = localStorage.getItem("tippay_menu_items");
-    return saved ? JSON.parse(saved) : [];
+    const saved = readStored<RestaurantMenuItem[]>("tippay_menu_items");
+    if (saved !== null && (saved.length > 0 || !USE_MOCK_DATA)) return saved;
+    return USE_MOCK_DATA ? getSeedMenuItems() : [];
   });
 
   const { userLocation } = useLocationContext();
@@ -79,39 +93,53 @@ export function RestaurantProvider({ children }: { children: ReactNode }) {
     setMenuItems((prev) => prev.map((i) => i.id === id ? { ...i, isAvailable: !i.isAvailable } : i));
   };
 
-  // Form final frontend restaurants from real-time data
   const activeRestaurants = adminRestaurants.filter((r) => r.status === "approved");
-  const restaurants: Restaurant[] = activeRestaurants.map((ar) => {
-    const calculatedDistance = (userLocation && ar.lat && ar.lng) 
-      ? getDistance(userLocation.lat, userLocation.lng, ar.lat, ar.lng).toFixed(1) + " km"
-      : "1.2 km";
+  const derivedRestaurants: Restaurant[] = activeRestaurants.map((ar) => {
+    const mockMatch = mockRestaurants.find((r) => r.id === ar.id);
+    const calculatedDistance =
+      userLocation && ar.lat && ar.lng
+        ? getDistance(userLocation.lat, userLocation.lng, ar.lat, ar.lng).toFixed(1) + " km"
+        : mockMatch?.distance ?? "1.2 km";
+
+    const menu: MenuItem[] = mockMatch
+      ? mockMatch.menu
+      : menuItems
+          .filter((m) => m.isAvailable)
+          .map(
+            (m) =>
+              ({
+                id: m.id,
+                name: m.name,
+                description: m.description,
+                price: m.price,
+                offerPrice: m.offerPrice,
+                image: m.image,
+                category: m.category,
+                isVeg: m.isVeg,
+              }) as MenuItem
+          );
 
     return {
       id: ar.id,
       name: ar.name,
       image: ar.image,
       category: ar.category,
-      rating: 4.5,
+      rating: mockMatch?.rating ?? 4.5,
       distance: calculatedDistance,
-      deliveryTime: "30-45 min",
-      isOpen: true,
+      deliveryTime: mockMatch?.deliveryTime ?? "30-45 min",
+      isOpen: mockMatch?.isOpen ?? true,
       lat: ar.lat,
       lng: ar.lng,
-      menu: menuItems.filter((m) => m.isAvailable).map((m) => ({
-        id: m.id,
-        name: m.name,
-        description: m.description,
-        price: m.price,
-        offerPrice: m.offerPrice,
-        image: m.image,
-        category: m.category,
-        isVeg: m.isVeg,
-      }) as MenuItem)
+      menu,
     };
   });
 
-  // Sort restaurants by distance
-  restaurants.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+  const restaurants: Restaurant[] =
+    derivedRestaurants.length > 0
+      ? [...derivedRestaurants].sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance))
+      : USE_MOCK_DATA
+        ? [...mockRestaurants]
+        : [];
 
   return (
     <RestaurantContext.Provider value={{
