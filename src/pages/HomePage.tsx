@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Search, X, ChevronRight, Navigation, Utensils, Star, Leaf } from "lucide-react";
+import { MapPin, Search, X, ChevronRight, Navigation, Utensils } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { categories, hotDeals } from "@/data/mockData";
@@ -16,6 +16,7 @@ import NotificationCenter from "@/components/NotificationCenter";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import RestaurantCard from "@/components/RestaurantCard";
 import heroBanner from "@/assets/hero-banner.jpg";
 
 const HomePage = () => {
@@ -35,18 +36,16 @@ const HomePage = () => {
   const { selectedAddress } = useAddress();
   const { restaurants } = useRestaurants();
   const { userLocation, isDetecting, detectLocation } = useLocationContext();
-  const { t, formatPrice } = useTranslation();
+  const { t } = useTranslation();
   const { addCraving } = useCravings();
 
   const filtered = restaurants.filter((r) => {
     const matchCategory = !activeCategory || 
-      r.category === activeCategory || 
-      r.menu.some(m => m.category === activeCategory || m.name.toLowerCase().includes(activeCategory.toLowerCase()));
+      r.category === activeCategory;
       
     const matchSearch = !searchQuery || 
       r.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      r.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.menu.some(m => m.name.toLowerCase().includes(searchQuery.toLowerCase()));
+      r.category.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchCategory && matchSearch;
   });
@@ -206,54 +205,9 @@ const HomePage = () => {
         <h2 className="mb-3 font-display text-sm font-semibold text-foreground">
           {activeCategory ? activeCategory : t("home.nearbyRestaurants")}
         </h2>
-        <div className="flex flex-col gap-6 pb-6">
-          {filtered.map((r) => (
-            <div key={r.id} className="flex flex-col gap-3">
-              <div className="flex items-center justify-between" onClick={() => navigate(`/restaurant/${r.id}`)}>
-                <div>
-                  <h3 className="font-display text-base font-bold text-card-foreground">{r.name}</h3>
-                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
-                    <span className="flex items-center gap-1 font-semibold text-card-foreground"><Star size={12} className="fill-accent text-accent animate-pulse" /> {r.rating}</span>
-                    <span>•</span>
-                    <span>{r.deliveryTime}</span>
-                    <span>•</span>
-                    <span>{r.distance}</span>
-                  </div>
-                </div>
-                <ChevronRight size={18} className="text-muted-foreground" />
-              </div>
-              
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x mt-1">
-                {r.menu.length > 0 ? (
-                  r.menu
-                    .filter((item) => {
-                      const matchesCat = !activeCategory || r.category === activeCategory || item.category === activeCategory || item.name.toLowerCase().includes(activeCategory.toLowerCase());
-                      const matchesSearch = !searchQuery || r.name.toLowerCase().includes(searchQuery.toLowerCase()) || r.category.toLowerCase().includes(searchQuery.toLowerCase()) || item.name.toLowerCase().includes(searchQuery.toLowerCase());
-                      return matchesCat && matchesSearch;
-                    })
-                    .map((item) => (
-                    <div key={item.id} className="min-w-[130px] snap-start rounded-xl bg-card border border-border/50 overflow-hidden shadow-sm flex flex-col cursor-pointer" onClick={() => navigate(`/restaurant/${r.id}`)}>
-                      <div className="h-24 w-full bg-muted">
-                        {item.image ? (
-                          <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="h-full w-full flex items-center justify-center text-muted-foreground bg-muted"><span className="text-[10px]">No Image</span></div>
-                        )}
-                      </div>
-                      <div className="p-2 flex-1 flex flex-col justify-between">
-                        <p className="font-semibold text-[11px] leading-tight line-clamp-2">{item.name}</p>
-                        <div className="flex items-center gap-1 mt-1.5">
-                          <span className="font-bold text-xs text-foreground">{formatPrice(item.offerPrice || item.price)}</span>
-                          {item.offerPrice && <span className="text-[9px] text-muted-foreground line-through">{formatPrice(item.price)}</span>}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs text-muted-foreground border-l-2 border-border pl-2 my-2">No menu available</p>
-                )}
-              </div>
-            </div>
+        <div className="grid grid-cols-1 gap-4 pb-6 sm:grid-cols-2">
+          {filtered.map((r, i) => (
+            <RestaurantCard key={r.id} restaurant={r} index={i} />
           ))}
         </div>
         {filtered.length === 0 && (

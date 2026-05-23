@@ -27,6 +27,7 @@ import OrderTrackingPage from "./pages/OrderTrackingPage";
 import ProfilePage from "./pages/ProfilePage";
 import AddressPage from "./pages/AddressPage";
 import FavoritesPage from "./pages/FavoritesPage";
+import OffersPage from "./pages/OffersPage";
 import SettingsPage from "./pages/SettingsPage";
 import EditProfilePage from "./pages/EditProfilePage";
 import NotificationSettingsPage from "./pages/NotificationSettingsPage";
@@ -83,6 +84,7 @@ const AppRoutes = () => (
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/addresses" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
     <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
+    <Route path="/offers" element={<ProtectedRoute><OffersPage /></ProtectedRoute>} />
     <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
     <Route path="/settings/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
     <Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettingsPage /></ProtectedRoute>} />

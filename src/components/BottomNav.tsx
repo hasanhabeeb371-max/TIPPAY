@@ -1,4 +1,4 @@
-import { Home, Search, ShoppingCart, Clock, User } from "lucide-react";
+import { Home, Search, ShoppingCart, Clock, User, Tag } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
 import { useNotifications } from "@/context/NotificationContext";
@@ -7,6 +7,7 @@ const navItems = [
   { icon: Home, label: "Home", path: "/home" },
   { icon: Search, label: "Search", path: "/search" },
   { icon: ShoppingCart, label: "Cart", path: "/cart" },
+  { icon: Tag, label: "Offers", path: "/offers" },
   { icon: Clock, label: "Orders", path: "/orders" },
   { icon: User, label: "Profile", path: "/profile" },
 ];
