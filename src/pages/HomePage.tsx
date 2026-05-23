@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Search, X, ChevronRight, Navigation, Utensils } from "lucide-react";
+import { MapPin, Search, X, Navigation, Utensils } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { categories, hotDeals } from "@/data/mockData";
@@ -21,7 +21,6 @@ import heroBanner from "@/assets/hero-banner.jpg";
 
 const HomePage = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const [showCravingModal, setShowCravingModal] = useState(false);
 
   // Craving Form State
@@ -40,17 +39,13 @@ const HomePage = () => {
   const { addCraving } = useCravings();
 
   const filtered = restaurants.filter((r) => {
-    const matchCategory = !activeCategory || 
-      r.category === activeCategory;
-      
-    const matchSearch = !searchQuery || 
-      r.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchCategory = !activeCategory || r.category === activeCategory;
+    const matchSearch =
+      !searchQuery ||
+      r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.category.toLowerCase().includes(searchQuery.toLowerCase());
-
     return matchCategory && matchSearch;
   });
-
-  const visibleCategories = categories.slice(0, 8);
 
   const handleToggleTag = (tag: string) => {
     setCravingTags(prev => 
@@ -174,7 +169,7 @@ const HomePage = () => {
       <div className="mt-5 px-4">
         <h2 className="mb-3 font-display text-sm font-semibold text-foreground">{t("home.categories")}</h2>
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {visibleCategories.map((cat, i) => (
+          {categories.map((cat, i) => (
             <CategoryChip
               key={cat.id}
               category={cat}
@@ -183,27 +178,13 @@ const HomePage = () => {
               index={i}
             />
           ))}
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={() => setShowAllCategories(true)}
-            className="flex flex-col items-center justify-center gap-1.5 rounded-xl p-2 bg-card hover:bg-card/80 flex-shrink-0"
-            style={{ minWidth: 72, minHeight: 84 }}
-          >
-            <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-accent/10">
-              <ChevronRight size={24} className="text-accent" />
-            </div>
-            <span className="text-[10px] font-medium leading-tight text-accent text-center">
-              {t("home.seeAll")}
-            </span>
-          </motion.button>
         </div>
       </div>
 
       {/* Restaurants */}
       <div className="mt-5 px-4">
         <h2 className="mb-3 font-display text-sm font-semibold text-foreground">
-          {activeCategory ? activeCategory : t("home.nearbyRestaurants")}
+          {activeCategory ?? t("home.nearbyRestaurants")}
         </h2>
         <div className="grid grid-cols-1 gap-4 pb-6 sm:grid-cols-2">
           {filtered.map((r, i) => (
@@ -219,42 +200,6 @@ const HomePage = () => {
       </div>
 
       <BottomNav />
-
-      {/* All Categories Popup Modal */}
-      {showAllCategories && (
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          className="fixed inset-0 z-[60] flex flex-col bg-background/95 backdrop-blur-xl"
-        >
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border/40 bg-background/80 px-4 py-4 backdrop-blur-md">
-            <h2 className="text-xl font-bold">All Categories</h2>
-            <button
-              onClick={() => setShowAllCategories(false)}
-              className="rounded-full bg-card p-2 text-foreground shadow-sm hover:bg-muted"
-            >
-              <X size={20} />
-            </button>
-          </div>
-          <div className="flex-1 overflow-y-auto px-4 py-6">
-            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-x-2 gap-y-6">
-              {categories.map((cat, i) => (
-                <CategoryChip
-                  key={cat.id}
-                  category={cat}
-                  isActive={activeCategory === cat.name}
-                  onClick={() => {
-                    setActiveCategory(activeCategory === cat.name ? null : cat.name);
-                    setShowAllCategories(false);
-                  }}
-                  index={i}
-                />
-              ))}
-            </div>
-          </div>
-        </motion.div>
-      )}
 
       {/* Cravings Modal Dialog */}
       <AnimatePresence>

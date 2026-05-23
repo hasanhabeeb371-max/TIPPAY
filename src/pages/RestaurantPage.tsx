@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useRestaurants } from "@/context/RestaurantContext";
 import { useCart } from "@/context/CartContext";
 import { useReviews } from "@/context/ReviewContext";
@@ -14,6 +14,7 @@ import BottomNav from "@/components/BottomNav";
 const RestaurantPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { items, addItem, updateQuantity, totalItems, totalPrice } = useCart();
   const { getReviewsForRestaurant } = useReviews();
   const { restaurants } = useRestaurants();
@@ -27,13 +28,42 @@ const RestaurantPage = () => {
   const restaurantReviews = restaurant ? getReviewsForRestaurant(restaurant.id) : [];
 
   useEffect(() => {
-    if (showSplash) {
-      const timer = setTimeout(() => {
-        setShowSplash(false);
-      }, 2500);
-      return () => clearTimeout(timer);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    setShowSplash(true);
+    setActiveCategory(null);
+  }, [id]);
+
+  useEffect(() => {
+    if (!showSplash) return;
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+      const param = searchParams.get("category");
+      if (param && restaurant?.menu.some((m) => m.category === param)) {
+        setActiveCategory(param);
+      } else {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [showSplash, searchParams, restaurant]);
+
+  useEffect(() => {
+    if (!activeCategory || showSplash) return;
+    const slug = activeCategory.replace(/\s+/g, "-").toLowerCase();
+    const el = document.getElementById(`category-${slug}`);
+    if (el) {
+      requestAnimationFrame(() => el.scrollIntoView({ behavior: "smooth", block: "start" }));
     }
-  }, [showSplash]);
+  }, [activeCategory, showSplash]);
+
+  const selectCategory = (cat: string | null) => {
+    setActiveCategory(cat);
+    if (cat) {
+      setSearchParams({ category: cat }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
+  };
 
   const offerCards = restaurant ? [
     { id: 1, text: "20% off on orders above ₹299", badge: "20%", gradient: "from-orange-500 to-amber-400", code: "SAVE20" },
@@ -316,7 +346,7 @@ const RestaurantPage = () => {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveCategory(null)}
+              onClick={() => selectCategory(null)}
               className={`flex-shrink-0 w-auto px-4 py-2 rounded-full flex items-center gap-2 transition-all duration-200 ${
                 activeCategory === null
                   ? 'bg-accent text-accent-foreground ring-2 ring-accent'
@@ -337,7 +367,7 @@ const RestaurantPage = () => {
                   key={cat}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setActiveCategory(isActive ? null : cat)}
+                  onClick={() => selectCategory(isActive ? null : cat)}
                   className={`flex-shrink-0 w-auto px-4 py-2 rounded-full flex items-center gap-2 transition-all duration-200 ${
                     isActive
                       ? 'bg-accent text-accent-foreground ring-2 ring-accent'
