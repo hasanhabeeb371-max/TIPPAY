@@ -6,6 +6,12 @@ import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import foodBiryani from "@/assets/food-biryani.jpg";
+import foodPizza from "@/assets/food-pizza.jpg";
+import foodBurger from "@/assets/food-burger.jpg";
+import foodDosa from "@/assets/food-dosa.jpg";
+import foodChinese from "@/assets/food-chinese.jpg";
+import foodDessert from "@/assets/food-dessert.jpg";
 
 // ── Mock data ─────────────────────────────────────────────────────────────────
 
@@ -52,7 +58,7 @@ const foodDeals: FoodDeal[] = [
     discount: 50,
     originalPrice: "₹280",
     offerPrice: "₹140",
-    image: "/src/assets/food-biryani.jpg",
+    image: foodBiryani,
     restaurant: "Biryani House",
     expiresIn: "Today 11:59 PM",
     tag: "HOT",
@@ -64,7 +70,7 @@ const foodDeals: FoodDeal[] = [
     discount: 50,
     originalPrice: "₹399",
     offerPrice: "₹399 for 2",
-    image: "/src/assets/food-pizza.jpg",
+    image: foodPizza,
     restaurant: "Pizza Planet",
     expiresIn: "2 days left",
     tag: "B1G1",
@@ -76,7 +82,7 @@ const foodDeals: FoodDeal[] = [
     discount: 30,
     originalPrice: "₹220",
     offerPrice: "₹154",
-    image: "/src/assets/food-burger.jpg",
+    image: foodBurger,
     restaurant: "Burger Barn",
     expiresIn: "3 days left",
   },
@@ -86,7 +92,7 @@ const restaurantOffers: RestaurantOffer[] = [
   {
     id: "ro1",
     restaurant: "Dosa Delight",
-    logo: "/src/assets/food-dosa.jpg",
+    logo: foodDosa,
     discount: 20,
     minOrder: "₹200",
     description: "Get 20% off on all orders above ₹200 from Dosa Delight.",
@@ -96,7 +102,7 @@ const restaurantOffers: RestaurantOffer[] = [
   {
     id: "ro2",
     restaurant: "Chinese Bowl",
-    logo: "/src/assets/food-chinese.jpg",
+    logo: foodChinese,
     discount: 15,
     minOrder: "₹300",
     description: "15% off on authentic Chinese dishes for orders above ₹300.",
@@ -105,7 +111,7 @@ const restaurantOffers: RestaurantOffer[] = [
   {
     id: "ro3",
     restaurant: "Sweet Desserts",
-    logo: "/src/assets/food-dessert.jpg",
+    logo: foodDessert,
     discount: 25,
     minOrder: "₹150",
     description: "Indulge in heavenly desserts with a 25% weekend discount!",
