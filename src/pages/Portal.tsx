@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { User, Store, Bike } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -5,6 +6,21 @@ import logo from "@/assets/logo.png";
 
 const Portal = () => {
   const navigate = useNavigate();
+  const [lastTap, setLastTap] = useState(0);
+
+  const handleAdminRoute = () => {
+    navigate("/login?type=admin");
+  };
+
+  const handleLogoTap = () => {
+    const now = Date.now();
+    const DOUBLE_PRESS_DELAY = 300;
+    if (now - lastTap < DOUBLE_PRESS_DELAY) {
+      handleAdminRoute();
+    } else {
+      setLastTap(now);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
@@ -13,7 +29,13 @@ const Portal = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-10 flex flex-col items-center"
       >
-        <img src={logo} alt="TIP PAY" className="mb-6 h-24 w-24 drop-shadow-md" />
+        <img
+          src={logo}
+          alt="TIP PAY"
+          className="mb-6 h-24 w-24 drop-shadow-md cursor-pointer hover:scale-105 active:scale-95 transition-transform select-none"
+          onClick={handleLogoTap}
+          onDoubleClick={handleAdminRoute}
+        />
         <h1 className="font-display text-4xl font-extrabold text-foreground tracking-tight text-center leading-tight">Welcome to TIP PAY! 👋</h1>
         <p className="mt-3 text-base text-muted-foreground text-center">We're so glad you're here. How would you like to continue?</p>
       </motion.div>
@@ -30,8 +52,8 @@ const Portal = () => {
             <User size={28} className="text-primary" />
           </div>
           <div className="text-left">
-            <h3 className="font-bold text-lg text-card-foreground">Customer & Admin</h3>
-            <p className="text-sm text-muted-foreground">Order food or manage the platform</p>
+            <h3 className="font-bold text-lg text-card-foreground">Customer</h3>
+            <p className="text-sm text-muted-foreground">Order delicious food fast</p>
           </div>
         </motion.button>
 

@@ -16,7 +16,7 @@ export function getSeedAdminRestaurants(): AdminRestaurant[] {
       name: r.name,
       image: r.image,
       owner: meta?.owner ?? "Demo Owner",
-      email: meta?.email ?? `owner-${r.id}@tippay.restaurant.com`,
+      email: meta?.email ?? `owner-${r.id}@tippay.com`,
       phone: meta?.phone ?? "+91 9876543210",
       location: meta?.location ?? "Karnataka",
       gstin: meta?.gstin ?? "29ABCDE1234F1Z5",

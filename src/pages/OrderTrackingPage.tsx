@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useOrders } from "@/context/OrderContext";
 import { useReviews } from "@/context/ReviewContext";
-import { ArrowLeft, Phone, CheckCircle2, CircleDot, ChefHat, Package, Truck, MapPin, Clock } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
+import { ArrowLeft, Phone, CheckCircle2, CircleDot, ChefHat, Package, Truck, MapPin, Clock, MessageSquare, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
 import ReviewDialog from "@/components/ReviewDialog";
+import WhatsChat from "@/components/WhatsChat";
 import type { OrderStatus } from "@/data/mockData";
 
 const STATUS_STEPS: { status: OrderStatus; label: string; icon: React.ElementType; description: string }[] = [
@@ -22,8 +24,34 @@ const OrderTrackingPage = () => {
   const navigate = useNavigate();
   const { getOrder } = useOrders();
   const { getReviewForOrder } = useReviews();
+  const { t, formatPrice } = useTranslation();
+  
   const order = getOrder(id || "");
   const [showReview, setShowReview] = useState(false);
+  
+  // WhatsApp Notification Mock States
+  const [whatsappOptIn, setWhatsappOptIn] = useState(true);
+  const [whatsToastMsg, setWhatsToastMsg] = useState<string | null>(null);
+  
+  // Track previous status to detect status changes
+  const prevStatusRef = useRef<OrderStatus | null>(null);
+
+  useEffect(() => {
+    if (order && whatsappOptIn) {
+      if (prevStatusRef.current && prevStatusRef.current !== order.status) {
+        // Status changed! Trigger simulated WhatsApp notification
+        setWhatsToastMsg(
+          `Your order *${order.id}* is now *${order.status}* at ${order.restaurantName}.`
+        );
+        // Automatically close toast after 4 seconds
+        const timer = setTimeout(() => {
+          setWhatsToastMsg(null);
+        }, 4000);
+        return () => clearTimeout(timer);
+      }
+      prevStatusRef.current = order.status;
+    }
+  }, [order?.status, whatsappOptIn, order?.id, order?.restaurantName]);
 
   if (!order) {
     return (
@@ -43,9 +71,37 @@ const OrderTrackingPage = () => {
     date.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background pb-32 relative">
+      {/* Slide-in WhatsApp notification bubble */}
+      <AnimatePresence>
+        {whatsToastMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: -80, scale: 0.95 }}
+            animate={{ opacity: 1, y: 16, scale: 1 }}
+            exit={{ opacity: 0, y: -40, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 350, damping: 25 }}
+            className="fixed top-0 left-4 right-4 z-50 rounded-2xl bg-card border-l-4 border-l-[#25D366] border border-border/50 p-3.5 shadow-2xl flex gap-3 cursor-pointer"
+            onClick={() => setWhatsToastMsg(null)}
+          >
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white">
+              <MessageSquare size={16} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#25D366] tracking-wide uppercase">WhatsApp</span>
+                <span className="text-[9px] text-muted-foreground">now</span>
+              </div>
+              <p className="text-xs font-semibold text-foreground mt-0.5">Tipay Assistant</p>
+              <p className="text-xs text-muted-foreground mt-0.5 truncate leading-tight">
+                {whatsToastMsg.replace(/\*/g, "")}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
-      <div className="sticky top-0 z-40 flex items-center gap-3 bg-background/95 px-4 py-4 backdrop-blur-md">
+      <div className="sticky top-0 z-40 flex items-center gap-3 bg-background/95 px-4 py-4 backdrop-blur-md border-b border-border/10">
         <button onClick={() => navigate("/orders")} className="rounded-full bg-card p-2">
           <ArrowLeft size={18} />
         </button>
@@ -60,7 +116,7 @@ const OrderTrackingPage = () => {
         key={order.status}
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-4 rounded-2xl bg-primary p-4"
+        className="mx-4 mt-4 rounded-2xl bg-primary p-4 shadow-md"
       >
         <div className="flex items-center gap-3">
           <motion.div
@@ -84,6 +140,31 @@ const OrderTrackingPage = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* WhatsApp Alerts Opt-in Panel */}
+      <div className="mx-4 mt-4 rounded-xl bg-card border border-border/30 p-3.5 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#25D366]/10 text-[#25D366]">
+            <MessageSquare size={16} />
+          </div>
+          <div>
+            <h4 className="text-xs font-bold text-foreground">WhatsApp Order Updates</h4>
+            <p className="text-[10px] text-muted-foreground">Receive real-time progress messages</p>
+          </div>
+        </div>
+        <button
+          onClick={() => setWhatsappOptIn(!whatsappOptIn)}
+          className={`flex h-5 w-9 items-center rounded-full p-0.5 transition-colors ${
+            whatsappOptIn ? "bg-[#25D366]" : "bg-muted"
+          }`}
+        >
+          <motion.div
+            layout
+            className="h-4 w-4 rounded-full bg-white shadow"
+            animate={{ x: whatsappOptIn ? 16 : 0 }}
+          />
+        </button>
+      </div>
 
       {/* Status Stepper */}
       <div className="mx-4 mt-6">
@@ -183,7 +264,7 @@ const OrderTrackingPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mx-4 mt-6 flex items-center gap-3 rounded-xl bg-card p-4"
+            className="mx-4 mt-6 flex items-center gap-3 rounded-xl bg-card p-4 border border-border/40"
           >
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/20 font-display text-sm font-bold text-accent-foreground">
               {order.deliveryAgent.name[0]}
@@ -194,7 +275,7 @@ const OrderTrackingPage = () => {
             </div>
             <a
               href={`tel:${order.deliveryAgent.phone}`}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-accent-foreground"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-accent text-accent-foreground hover:brightness-105"
             >
               <Phone size={16} />
             </a>
@@ -203,30 +284,30 @@ const OrderTrackingPage = () => {
       </AnimatePresence>
 
       {/* Order Summary */}
-      <div className="mx-4 mt-6 rounded-xl bg-card p-4">
+      <div className="mx-4 mt-6 rounded-xl bg-card p-4 border border-border/40">
         <h3 className="font-display text-sm font-semibold text-card-foreground">{order.restaurantName}</h3>
         <div className="mt-2 space-y-1">
           {order.items.map((item, j) => (
             <div key={j} className="flex justify-between text-xs text-muted-foreground">
               <span>{item.quantity}x {item.name}</span>
-              <span>₹{item.price * item.quantity}</span>
+              <span>{formatPrice(item.price * item.quantity)}</span>
             </div>
           ))}
         </div>
-        <div className="mt-2 border-t border-border pt-2">
+        <div className="mt-2 border-t border-border/20 pt-2">
           <div className="flex justify-between text-xs text-muted-foreground">
             <span>Delivery Fee</span>
-            <span>₹{order.deliveryFee}</span>
+            <span>{formatPrice(order.deliveryFee)}</span>
           </div>
           {order.discount && order.discount > 0 ? (
-            <div className="mt-1 flex justify-between text-xs text-success">
+            <div className="mt-1 flex justify-between text-xs text-success font-semibold">
               <span>Coupon Discount</span>
-              <span>-₹{Math.round(order.discount)}</span>
+              <span>-{formatPrice(Math.round(order.discount))}</span>
             </div>
           ) : null}
-          <div className="mt-1 flex justify-between text-sm font-bold text-card-foreground">
+          <div className="mt-1 flex justify-between text-sm font-extrabold text-card-foreground">
             <span>Total</span>
-            <span>₹{Math.round(order.totalPrice)}</span>
+            <span>{formatPrice(Math.round(order.totalPrice))}</span>
           </div>
         </div>
       </div>
@@ -239,9 +320,9 @@ const OrderTrackingPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               onClick={() => setShowReview(true)}
-              className="w-full rounded-2xl bg-accent/15 p-4 text-center transition-colors hover:bg-accent/25"
+              className="w-full rounded-2xl bg-accent/10 border border-accent/20 p-4 text-center transition-colors hover:bg-accent/15"
             >
-              <p className="font-display text-sm font-semibold text-accent-foreground">⭐ Rate your order</p>
+              <p className="font-display text-sm font-bold text-accent-foreground">⭐ Rate your order</p>
               <p className="mt-0.5 text-xs text-muted-foreground">Help us improve your experience</p>
             </motion.button>
           ) : (
@@ -254,6 +335,9 @@ const OrderTrackingPage = () => {
           )}
         </div>
       )}
+
+      {/* Simulated WhatsApp Floating Chatbot */}
+      <WhatsChat />
 
       <BottomNav />
     </div>

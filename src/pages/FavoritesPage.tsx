@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useRestaurants } from "@/context/RestaurantContext";
 import { useCart } from "@/context/CartContext";
+import { useTranslation } from "@/context/LanguageContext";
 import BottomNav from "@/components/BottomNav";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -12,6 +13,7 @@ const FavoritesPage = () => {
   const { favoriteFoodIds, toggleFoodFavorite, isFoodFavorite } = useFavorites();
   const { restaurants } = useRestaurants();
   const { items, addItem, updateQuantity } = useCart();
+  const { formatPrice } = useTranslation();
 
   const favoriteItems = restaurants.flatMap(r => 
     r.menu.filter(m => favoriteFoodIds.includes(m.id)).map(m => ({ item: m, restaurant: r }))
@@ -78,9 +80,9 @@ const FavoritesPage = () => {
                     </div>
                     <div className="mt-1.5 flex flex-col gap-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-card-foreground">₹{item.offerPrice || item.price}</span>
+                        <span className="text-sm font-bold text-card-foreground">{formatPrice(item.offerPrice || item.price)}</span>
                         {item.offerPrice && (
-                          <span className="text-xs text-muted-foreground line-through">₹{item.price}</span>
+                          <span className="text-xs text-muted-foreground line-through">{formatPrice(item.price)}</span>
                         )}
                       </div>
                       <div className="flex items-center gap-2">

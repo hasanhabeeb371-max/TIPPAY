@@ -73,11 +73,11 @@ export const adminOrders: AdminOrder[] = [
 ];
 
 export const adminAgents: AdminAgent[] = [
-  { id: "ag1", name: "Suresh M.", email: "suresh@tippay.agent.com", phone: "+91 9876500001", completedDeliveries: 245, rating: 4.8, status: "active", joinedDate: "2025-11-01" },
-  { id: "ag2", name: "Ravi K.", email: "ravi@tippay.agent.com", phone: "+91 9876500002", completedDeliveries: 189, rating: 4.6, status: "active", joinedDate: "2025-12-15" },
-  { id: "ag3", name: "Mohan P.", email: "mohan@tippay.agent.com", phone: "+91 9876500003", completedDeliveries: 312, rating: 4.9, status: "active", joinedDate: "2025-10-10" },
-  { id: "ag4", name: "Deepak R.", email: "deepak@tippay.agent.com", phone: "+91 9876500004", completedDeliveries: 78, rating: 4.3, status: "inactive", joinedDate: "2026-01-20" },
-  { id: "ag5", name: "Kiran S.", email: "kiran@tippay.agent.com", phone: "+91 9876500005", completedDeliveries: 156, rating: 4.7, status: "active", joinedDate: "2025-12-01" },
+  { id: "ag1", name: "Suresh M.", email: "suresh@tippay.com", phone: "+91 9876500001", completedDeliveries: 245, rating: 4.8, status: "active", joinedDate: "2025-11-01" },
+  { id: "ag2", name: "Ravi K.", email: "ravi@tippay.com", phone: "+91 9876500002", completedDeliveries: 189, rating: 4.6, status: "active", joinedDate: "2025-12-15" },
+  { id: "ag3", name: "Mohan P.", email: "mohan@tippay.com", phone: "+91 9876500003", completedDeliveries: 312, rating: 4.9, status: "active", joinedDate: "2025-10-10" },
+  { id: "ag4", name: "Deepak R.", email: "deepak@tippay.com", phone: "+91 9876500004", completedDeliveries: 78, rating: 4.3, status: "inactive", joinedDate: "2026-01-20" },
+  { id: "ag5", name: "Kiran S.", email: "kiran@tippay.com", phone: "+91 9876500005", completedDeliveries: 156, rating: 4.7, status: "active", joinedDate: "2025-12-01" },
 ];
 
 export const adminUsers: AdminUser[] = [

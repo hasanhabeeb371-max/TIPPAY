@@ -4,6 +4,7 @@ import { useCart } from "@/context/CartContext";
 import { useReviews } from "@/context/ReviewContext";
 import { ArrowLeft, Star, Clock, MapPin, Plus, Minus, Leaf, ShoppingCart, Zap, Heart } from "lucide-react";
 import { useFavorites } from "@/context/FavoritesContext";
+import { useTranslation } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ const RestaurantPage = () => {
   const { getReviewsForRestaurant } = useReviews();
   const { restaurants } = useRestaurants();
   const { toggleFoodFavorite, isFoodFavorite } = useFavorites();
+  const { formatPrice } = useTranslation();
 
   const restaurant = restaurants.find((r) => r.id === id);
   const restaurantReviews = restaurant ? getReviewsForRestaurant(restaurant.id) : [];
@@ -130,9 +132,9 @@ const RestaurantPage = () => {
                         </div>
                         <div className="mt-1.5 flex flex-col gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold text-card-foreground">₹{item.offerPrice || item.price}</span>
+                            <span className="text-sm font-bold text-card-foreground">{formatPrice(item.offerPrice || item.price)}</span>
                             {item.offerPrice && (
-                              <span className="text-xs text-muted-foreground line-through">₹{item.price}</span>
+                              <span className="text-xs text-muted-foreground line-through">{formatPrice(item.price)}</span>
                             )}
                           </div>
                           <div className="flex items-center gap-2">
@@ -225,7 +227,7 @@ const RestaurantPage = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-xs text-primary-foreground/70">{totalItems} item{totalItems > 1 ? "s" : ""}</p>
-                  <p className="text-sm font-bold text-primary-foreground">₹{totalPrice}</p>
+                  <p className="text-sm font-bold text-primary-foreground">{formatPrice(totalPrice)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1.5 text-sm font-bold text-primary-foreground">

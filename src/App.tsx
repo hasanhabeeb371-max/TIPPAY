@@ -13,6 +13,8 @@ import { NotificationProvider } from "@/context/NotificationContext";
 import { RestaurantProvider } from "@/context/RestaurantContext";
 import { LocationProvider } from "@/context/LocationContext";
 import { FavoritesProvider } from "@/context/FavoritesContext";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { CravingsProvider } from "@/context/CravingsContext";
 import SplashScreen from "./pages/SplashScreen";
 import Portal from "./pages/Portal";
 import Login from "./pages/Login";
@@ -34,6 +36,7 @@ import OrderManagement from "./pages/restaurant/OrderManagement";
 import MenuEditor from "./pages/restaurant/MenuEditor";
 import RestaurantAnalytics from "./pages/restaurant/RestaurantAnalytics";
 import CouponManagement from "./pages/restaurant/CouponManagement";
+import DishRequests from "./pages/restaurant/DishRequests";
 import DeliveryLayout from "./pages/delivery/DeliveryLayout";
 import NearbyOrders from "./pages/delivery/NearbyOrders";
 import ActiveDelivery from "./pages/delivery/ActiveDelivery";
@@ -76,6 +79,7 @@ const AppRoutes = () => (
     <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
     <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
     <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+    <Route path="/order/:id" element={<ProtectedRoute><OrderTrackingPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
     <Route path="/addresses" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
     <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
@@ -89,6 +93,7 @@ const AppRoutes = () => (
       <Route index element={<Navigate to="orders" replace />} />
       <Route path="orders" element={<OrderManagement />} />
       <Route path="menu" element={<MenuEditor />} />
+      <Route path="requests" element={<DishRequests />} />
       <Route path="coupons" element={<CouponManagement />} />
       <Route path="analytics" element={<RestaurantAnalytics />} />
     </Route>
@@ -123,33 +128,37 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <LocationProvider>
-        <AuthProvider>
-          <FavoritesProvider>
-            <CartProvider>
-          <OrderProvider>
-            <AddressProvider>
-            <ReviewProvider>
-            <NotificationProvider>
-            <RestaurantProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
-                <BrowserRouter>
-                  <AppRoutes />
-                </BrowserRouter>
-              </TooltipProvider>
-            </RestaurantProvider>
-            </NotificationProvider>
-            </ReviewProvider>
-            </AddressProvider>
-          </OrderProvider>
-        </CartProvider>
-      </FavoritesProvider>
-    </AuthProvider>
-  </LocationProvider>
-</QueryClientProvider>
-);
+        <LanguageProvider>
+          <AuthProvider>
+            <FavoritesProvider>
+              <CartProvider>
+                <CravingsProvider>
+                  <OrderProvider>
+                    <AddressProvider>
+                      <ReviewProvider>
+                        <NotificationProvider>
+                          <RestaurantProvider>
+                            <TooltipProvider>
+                              <Toaster />
+                              <Sonner />
+                              {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
+                              <BrowserRouter>
+                                <AppRoutes />
+                              </BrowserRouter>
+                            </TooltipProvider>
+                          </RestaurantProvider>
+                        </NotificationProvider>
+                      </ReviewProvider>
+                    </AddressProvider>
+                  </OrderProvider>
+                </CravingsProvider>
+              </CartProvider>
+            </FavoritesProvider>
+          </AuthProvider>
+        </LanguageProvider>
+      </LocationProvider>
+    </QueryClientProvider>
+  );
 };
 
 export default App;

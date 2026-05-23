@@ -30,8 +30,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function detectRole(email: string): UserRole {
   if (email.endsWith("@tippay.admin.com")) return "admin";
-  if (email.endsWith("@tippay.agent.com")) return "delivery";
-  if (email.endsWith("@tippay.restaurant.com")) return "restaurant";
+  if (email.endsWith("@tippay.com")) {
+    if (email.includes("agent") || email.includes("rider") || email.includes("delivery")) return "delivery";
+    return "restaurant";
+  }
   return "customer";
 }
 
@@ -43,8 +45,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (saved) return JSON.parse(saved);
     return [
       { name: "Super Admin", email: "tippay@admin.com", phone: "+91 9999999999", role: "admin", status: "active", joinedDate: "2025-01-01" },
-      { name: "Restaurant Demo", email: "rest@tippay.restaurant.com", phone: "+91 9999999999", role: "restaurant", status: "active", joinedDate: "2025-01-01" },
-      { name: "Agent Demo", email: "agent@tippay.agent.com", phone: "+91 9999999999", role: "delivery", status: "active", joinedDate: "2025-01-01" },
+      { name: "Restaurant Demo", email: "rest@tippay.com", phone: "+91 9999999999", role: "restaurant", status: "active", joinedDate: "2025-01-01" },
+      { name: "Agent Demo", email: "agent@tippay.com", phone: "+91 9999999999", role: "delivery", status: "active", joinedDate: "2025-01-01" },
       { name: "Customer Demo", email: "demo@gmail.com", phone: "+91 9999999999", role: "customer", status: "active", joinedDate: "2025-01-01" }
     ];
   });

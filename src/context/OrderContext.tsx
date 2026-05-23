@@ -29,6 +29,7 @@ interface OrderContextType {
   activeOrder: LiveOrder | null;
   placeOrder: (order: Omit<LiveOrder, "id" | "status" | "placedAt" | "statusHistory">) => string;
   getOrder: (id: string) => LiveOrder | undefined;
+  cancelOrder: (id: string) => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -40,6 +41,27 @@ const AGENT_NAMES = ["Rajesh K.", "Priya M.", "Arun S.", "Meena R.", "Vikram P."
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orders, setOrders] = useState<LiveOrder[]>([]);
   const timersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  const cancelOrder = useCallback((orderId: string) => {
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id !== orderId) return o;
+        return {
+          ...o,
+          status: "Delivered", // Marks as done/removed from active
+          statusHistory: [...o.statusHistory, { status: "Delivered", time: new Date() }]
+        };
+      })
+    );
+    // Cancel any scheduled status advances
+    for (let i = 0; i < STATUS_FLOW.length; i++) {
+      const timer = timersRef.current.get(`${orderId}-${i}`);
+      if (timer) {
+        clearTimeout(timer);
+        timersRef.current.delete(`${orderId}-${i}`);
+      }
+    }
+  }, []);
 
   const advanceStatus = useCallback((orderId: string) => {
     setOrders((prev) =>
@@ -102,7 +124,7 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const activeOrder = orders.find((o) => o.status !== "Delivered") || null;
 
   return (
-    <OrderContext.Provider value={{ orders, activeOrder, placeOrder, getOrder }}>
+    <OrderContext.Provider value={{ orders, activeOrder, placeOrder, getOrder, cancelOrder }}>
       {children}
     </OrderContext.Provider>
   );

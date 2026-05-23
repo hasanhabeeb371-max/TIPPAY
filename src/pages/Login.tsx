@@ -23,15 +23,16 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { addAdminRestaurant } = useRestaurants();
-  const portalType = searchParams.get("type") || "user"; // "user" | "restaurant" | "delivery"
+  const portalType = searchParams.get("type") || "user"; // "user" | "restaurant" | "delivery" | "admin"
 
   const portalThemes = {
     user: { title: "TIP PAY", desc: "Delicious food, delivered fast", btn: "bg-primary text-primary-foreground hover:bg-primary/90" },
     restaurant: { title: "Restaurant Portal", desc: "Manage your restaurant business", btn: "bg-orange-500 text-white hover:bg-orange-600" },
     delivery: { title: "Delivery Agent Portal", desc: "Start earning instantly today", btn: "bg-blue-500 text-white hover:bg-blue-600" },
+    admin: { title: "Admin Portal", desc: "Manage the TIP PAY platform", btn: "bg-red-600 text-white hover:bg-red-700" },
   };
 
-  const theme = portalThemes[portalType as keyof typeof portalThemes];
+  const theme = portalThemes[portalType as keyof typeof portalThemes] || portalThemes.user;
 
   const getRedirectPath = (role: UserRole) => {
     switch (role) {
@@ -44,21 +45,32 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const role: UserRole = portalType === "restaurant" ? "restaurant" : portalType === "delivery" ? "delivery" : "customer";
+    const role: UserRole = portalType === "restaurant" ? "restaurant" : portalType === "delivery" ? "delivery" : portalType === "admin" ? "admin" : "customer";
 
     let finalEmail = email.trim();
-    if (role === "restaurant" && !finalEmail.includes("@")) {
-      finalEmail += "@tippay.restaurant.com";
+    if ((role === "restaurant" || role === "delivery") && !finalEmail.includes("@")) {
+      finalEmail += "@tippay.com";
+    } else if (role === "admin" && !finalEmail.includes("@")) {
+      finalEmail += "@admin.com";
     }
 
     if (isSignup) {
+      if (role === "admin") {
+        toast.error("Admin accounts cannot be self-registered.");
+        return;
+      }
       if (role === "restaurant") {
         if (!location || !gstin) {
           toast.error("Please enter all restaurant details including Location and GSTIN.");
           return;
         }
-        if (!finalEmail.endsWith("@tippay.restaurant.com")) {
-          toast.error("Restaurant email must end with @tippay.restaurant.com");
+        if (!finalEmail.endsWith("@tippay.com")) {
+          toast.error("Restaurant email must end with @tippay.com");
+          return;
+        }
+      } else if (role === "delivery") {
+        if (!finalEmail.endsWith("@tippay.com")) {
+          toast.error("Delivery agent email must end with @tippay.com");
           return;
         }
       }
@@ -106,7 +118,11 @@ const Login = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8 flex flex-col items-center"
       >
-        <img src={logo} alt="TIP PAY" className="mb-4 h-20 w-20 drop-shadow-sm" />
+        <img
+          src={logo}
+          alt="TIP PAY"
+          className="mb-4 h-20 w-20 drop-shadow-sm select-none"
+        />
         <h1 className="font-display text-3xl font-bold text-foreground text-center">{theme.title}</h1>
         <p className="mt-1 text-sm text-muted-foreground text-center">{theme.desc}</p>
       </motion.div>
@@ -174,7 +190,7 @@ const Login = () => {
           </Label>
           <div className="relative">
             <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input id="email" type={portalType === "restaurant" ? "text" : "email"} value={email} onChange={(e) => setEmail(e.target.value)} placeholder={portalType === "restaurant" ? "name@tippay.restaurant.com" : "you@example.com"} className="pl-9" required />
+            <Input id="email" type={(portalType === "restaurant" || portalType === "delivery" || portalType === "admin") ? "text" : "email"} value={email} onChange={(e) => setEmail(e.target.value)} placeholder={portalType === "admin" ? "tippay@admin.com" : (portalType === "restaurant" || portalType === "delivery") ? "name@tippay.com" : "you@example.com"} className="pl-9" required />
           </div>
         </div>
 
@@ -193,12 +209,14 @@ const Login = () => {
           {isSignup ? "Sign Up" : "Login"}
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
-          {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
-          <button type="button" onClick={() => setIsSignup(!isSignup)} className="font-semibold text-accent underline-offset-2 hover:underline">
-            {isSignup ? "Login" : "Sign Up"}
-          </button>
-        </p>
+        {portalType !== "admin" && (
+          <p className="text-center text-sm text-muted-foreground">
+            {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
+            <button type="button" onClick={() => setIsSignup(!isSignup)} className="font-semibold text-accent underline-offset-2 hover:underline">
+              {isSignup ? "Login" : "Sign Up"}
+            </button>
+          </p>
+        )}
       </motion.form>
     </div>
   );

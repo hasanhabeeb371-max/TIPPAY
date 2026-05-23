@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
 import { mockCoupons, Coupon } from "@/data/mockData";
 import { toast } from "sonner";
+import { useTranslation } from "@/context/LanguageContext";
 import BottomNav from "@/components/BottomNav";
 
 const GPayIcon = ({ size = 24, ...props }: any) => (
@@ -39,6 +40,7 @@ const PAYMENT_METHODS = [
 const CartPage = () => {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } = useCart();
   const { placeOrder } = useOrders();
+  const { formatPrice } = useTranslation();
   const navigate = useNavigate();
 
   const [promoInput, setPromoInput] = useState("");
@@ -85,7 +87,7 @@ const CartPage = () => {
       return;
     }
     if (totalPrice < promo.minOrderValue) {
-      setPromoError(`Minimum order ₹${promo.minOrderValue} required`);
+      setPromoError(`Minimum order ${formatPrice(promo.minOrderValue)} required`);
       return;
     }
     setAppliedPromo(promo);
@@ -166,7 +168,7 @@ const CartPage = () => {
                 <div className="flex-1">
                   <h3 className="text-sm font-semibold text-card-foreground">{item.name}</h3>
                   <p className="text-xs text-muted-foreground">{item.restaurantName}</p>
-                  <p className="mt-1 text-sm font-bold text-card-foreground">₹{(item.offerPrice || item.price) * item.quantity}</p>
+                  <p className="mt-1 text-sm font-bold text-card-foreground">{formatPrice((item.offerPrice || item.price) * item.quantity)}</p>
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   <button onClick={() => removeItem(item.id)} className="text-muted-foreground hover:text-destructive">
@@ -203,7 +205,7 @@ const CartPage = () => {
                     <div>
                       <p className="text-xs font-bold text-card-foreground">{appliedPromo.code}</p>
                       <p className="text-[10px] text-muted-foreground">
-                        {appliedPromo.type === "percentage" ? `${appliedPromo.discount}% off` : `₹${appliedPromo.discount} off`} · Saving ₹{Math.round(discount)}
+                        {appliedPromo.type === "percentage" ? `${appliedPromo.discount}% off` : `${formatPrice(appliedPromo.discount)} off`} · Saving {formatPrice(Math.round(discount))}
                       </p>
                     </div>
                   </div>
@@ -285,7 +287,7 @@ const CartPage = () => {
                         </span>
                         {method.id === "cod" && (
                           <span className="text-[10px] text-muted-foreground">
-                            + ₹30 extra charge
+                            + {formatPrice(30)} extra charge
                           </span>
                         )}
                       </div>
@@ -315,7 +317,7 @@ const CartPage = () => {
           <div className="mt-4 space-y-2 rounded-xl bg-card p-4">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Subtotal</span>
-              <span className="text-card-foreground">₹{totalPrice}</span>
+              <span className="text-card-foreground">{formatPrice(totalPrice)}</span>
             </div>
             {discount > 0 && (
               <motion.div
@@ -324,12 +326,12 @@ const CartPage = () => {
                 className="flex justify-between text-sm"
               >
                 <span className="text-success">Discount</span>
-                <span className="font-medium text-success">-₹{Math.round(discount)}</span>
+                <span className="font-medium text-success">-{formatPrice(Math.round(discount))}</span>
               </motion.div>
             )}
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Delivery Fee</span>
-              <span className="text-card-foreground">₹{deliveryFee}</span>
+              <span className="text-card-foreground">{formatPrice(deliveryFee)}</span>
             </div>
             {codFee > 0 && (
               <motion.div
@@ -338,19 +340,19 @@ const CartPage = () => {
                 className="flex justify-between text-sm"
               >
                 <span className="text-muted-foreground">COD Charge</span>
-                <span className="text-card-foreground">₹{codFee}</span>
+                <span className="text-card-foreground">{formatPrice(codFee)}</span>
               </motion.div>
             )}
             <div className="border-t border-border pt-2">
               <div className="flex justify-between text-base font-bold">
                 <span>Total</span>
-                <span>₹{Math.round(grandTotal)}</span>
+                <span>{formatPrice(Math.round(grandTotal))}</span>
               </div>
             </div>
           </div>
 
           <Button onClick={handleCheckout} size="lg" className="mt-4 w-full bg-primary text-primary-foreground hover:bg-primary/90">
-            Place Order · ₹{Math.round(grandTotal)}
+            Place Order · {formatPrice(Math.round(grandTotal))}
           </Button>
         </div>
       )}
