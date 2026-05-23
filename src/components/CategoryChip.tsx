@@ -14,17 +14,21 @@ const CategoryChip = ({ category, isActive, onClick, index = 0 }: Props) => (
     animate={{ opacity: 1, scale: 1 }}
     transition={{ delay: index * 0.04 }}
     onClick={onClick}
-    className={`flex flex-col items-center gap-1.5 rounded-xl p-2 transition-all ${
-      isActive ? "bg-accent/20 ring-2 ring-accent" : "bg-card hover:bg-card/80"
+    className={`flex shrink-0 flex-col items-center gap-1.5 rounded-full px-1.5 py-1 text-xs font-semibold transition-all ${
+      isActive
+        ? "text-accent"
+        : "text-foreground hover:text-accent"
     }`}
-    style={{ minWidth: 72 }}
+    style={{ minWidth: 70 }}
   >
-    <div className="h-12 w-12 overflow-hidden rounded-full">
-      <img src={category.image} alt={category.name} className="h-full w-full object-cover" />
-    </div>
-    <span className={`text-[10px] font-medium leading-tight ${isActive ? "text-accent-foreground" : "text-muted-foreground"}`}>
-      {category.name}
+    <span
+      className={`h-14 w-14 shrink-0 overflow-hidden rounded-full bg-white p-1 shadow-sm ring-1 transition-all ${
+        isActive ? "ring-accent shadow-accent/10" : "ring-border/40"
+      }`}
+    >
+      <img src={category.image} alt={category.name} className="h-full w-full rounded-full object-cover" />
     </span>
+    <span className="max-w-[68px] text-center text-[10px] leading-tight">{category.name}</span>
   </motion.button>
 );
 

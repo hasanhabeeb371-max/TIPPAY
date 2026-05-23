@@ -26,6 +26,7 @@ import SearchPage from "./pages/SearchPage";
 import OrdersPage from "./pages/OrdersPage";
 import OrderTrackingPage from "./pages/OrderTrackingPage";
 import ProfilePage from "./pages/ProfilePage";
+import HistoryPage from "./pages/HistoryPage";
 import AddressPage from "./pages/AddressPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import OffersPage from "./pages/OffersPage";
@@ -83,6 +84,7 @@ const AppRoutes = () => (
     <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
     <Route path="/order/:id" element={<ProtectedRoute><OrderTrackingPage /></ProtectedRoute>} />
     <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+    <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
     <Route path="/addresses" element={<ProtectedRoute><AddressPage /></ProtectedRoute>} />
     <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
     <Route path="/offers" element={<ProtectedRoute><OffersPage /></ProtectedRoute>} />

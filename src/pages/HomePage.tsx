@@ -1,14 +1,15 @@
-import { useState } from "react";
-import { MapPin, Search, X, Navigation, Utensils } from "lucide-react";
+import { useMemo, useState } from "react";
+import { MapPin, Search, X, Navigation, Utensils, Sparkles, Clock, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { categories, hotDeals } from "@/data/mockData";
+import { categories, hotDeals, mockOrders } from "@/data/mockData";
 import CategoryChip from "@/components/CategoryChip";
 import BottomNav from "@/components/BottomNav";
 import HotDealsCarousel from "@/components/HotDealsCarousel";
 import { useAuth } from "@/context/AuthContext";
 import { useAddress } from "@/context/AddressContext";
 import { useRestaurants } from "@/context/RestaurantContext";
+import { useOrders } from "@/context/OrderContext";
 import { useLocationContext } from "@/context/LocationContext";
 import { useTranslation } from "@/context/LanguageContext";
 import { useCravings } from "@/context/CravingsContext";
@@ -22,6 +23,7 @@ import heroBanner from "@/assets/hero-banner.jpg";
 const HomePage = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showCravingModal, setShowCravingModal] = useState(false);
+  const [showRecommendations, setShowRecommendations] = useState(false);
 
   // Craving Form State
   const [cravingDish, setCravingDish] = useState("");
@@ -34,9 +36,71 @@ const HomePage = () => {
   const { user } = useAuth();
   const { selectedAddress } = useAddress();
   const { restaurants } = useRestaurants();
+  const { orders: liveOrders } = useOrders();
   const { userLocation, isDetecting, detectLocation } = useLocationContext();
-  const { t } = useTranslation();
+  const { t, formatPrice } = useTranslation();
   const { addCraving } = useCravings();
+
+  const previousOrders = useMemo(
+    () =>
+      [
+      ...liveOrders,
+      ...mockOrders.map((order) => ({
+        ...order,
+        restaurantId: "",
+        placedAt: new Date(`${order.date} ${order.time}`),
+        deliveryFee: 0,
+        estimatedDelivery: "",
+        paymentMethod: "",
+        statusHistory: [],
+      })),
+      ].sort((a, b) => b.placedAt.getTime() - a.placedAt.getTime()),
+    [liveOrders]
+  );
+
+  const recommendations = useMemo(() => {
+    const restaurantCounts = new Map<string, number>();
+    const orderedItemNames = new Set<string>();
+    const orderedWords = new Set<string>();
+
+    previousOrders.forEach((order) => {
+      restaurantCounts.set(order.restaurantName, (restaurantCounts.get(order.restaurantName) || 0) + 1);
+      order.items.forEach((item) => {
+        const normalizedName = item.name.toLowerCase();
+        orderedItemNames.add(normalizedName);
+        normalizedName
+          .split(/[^a-z0-9]+/)
+          .filter((word) => word.length > 3)
+          .forEach((word) => orderedWords.add(word));
+      });
+    });
+
+    return restaurants
+      .flatMap((restaurant) =>
+        restaurant.menu.map((item) => {
+          const itemName = item.name.toLowerCase();
+          const itemCategory = item.category.toLowerCase();
+          const restaurantOrderCount = restaurantCounts.get(restaurant.name) || 0;
+          const exactRepeat = orderedItemNames.has(itemName);
+          const categoryMatch = Array.from(orderedWords).some(
+            (word) => itemName.includes(word) || itemCategory.includes(word)
+          );
+          const offerBoost = item.offerPrice ? 1 : 0;
+          const score = restaurantOrderCount * 3 + (exactRepeat ? 5 : 0) + (categoryMatch ? 2 : 0) + offerBoost + restaurant.rating / 10;
+
+          let reason = "Popular nearby pick";
+          if (exactRepeat) reason = "You ordered this before";
+          else if (restaurantOrderCount > 0) reason = `Because you ordered from ${restaurant.name}`;
+          else if (categoryMatch) reason = "Matches your past cravings";
+          else if (item.offerPrice) reason = "Good deal for you";
+
+          return { restaurant, item, score, reason };
+        })
+      )
+      .filter((rec) => rec.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 6);
+  }, [previousOrders, restaurants]);
 
   const filtered = restaurants.filter((r) => {
     const matchCategory = !activeCategory || r.category === activeCategory;
@@ -136,6 +200,80 @@ const HomePage = () => {
         </div>
       </motion.div>
 
+      {/* Personalized Recommendations */}
+      <div className="mx-4 mt-4">
+        <Button
+          onClick={() => setShowRecommendations((visible) => !visible)}
+          className="flex h-12 w-full items-center justify-between rounded-xl bg-foreground px-4 text-background shadow-sm hover:bg-foreground/90"
+        >
+          <span className="flex items-center gap-2 text-sm font-extrabold">
+            <Sparkles size={17} className="text-accent" />
+            Recommended for you
+          </span>
+          <span className="text-[10px] font-semibold text-background/70">
+            Based on previous orders
+          </span>
+        </Button>
+
+        <AnimatePresence>
+          {showRecommendations && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -8, height: 0 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-3 flex gap-3 overflow-x-auto pb-1 scrollbar-none">
+                {recommendations.map(({ restaurant, item, reason }, index) => (
+                  <motion.button
+                    key={`${restaurant.id}-${item.id}`}
+                    type="button"
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.04 }}
+                    onClick={() => navigate(`/restaurant/${restaurant.id}?category=${encodeURIComponent(item.category)}`)}
+                    className="w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-border/40 bg-card text-left shadow-sm transition-all hover:border-accent/50 hover:shadow-md"
+                  >
+                    <div className="flex gap-3 p-3">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="h-20 w-20 rounded-lg object-cover"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[10px] font-bold uppercase tracking-wide text-accent">{reason}</p>
+                        <h3 className="mt-1 line-clamp-2 text-sm font-bold text-card-foreground">{item.name}</h3>
+                        <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{restaurant.name}</p>
+                        <div className="mt-2 flex items-center gap-2 text-[10px] text-muted-foreground">
+                          <span className="flex items-center gap-0.5">
+                            <Star size={10} className="fill-accent text-accent" />
+                            {restaurant.rating}
+                          </span>
+                          <span className="flex items-center gap-0.5">
+                            <Clock size={10} />
+                            {restaurant.deliveryTime}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm font-extrabold text-card-foreground">
+                          {formatPrice(item.offerPrice ?? item.price)}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+
+                {recommendations.length === 0 && (
+                  <div className="w-full rounded-xl border border-dashed border-border/50 bg-card p-4 text-center">
+                    <p className="text-sm font-semibold text-card-foreground">No recommendations yet</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Place an order and Tipay will learn what you like.</p>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
       {/* Request a Dish Cravings Banner */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
@@ -167,8 +305,8 @@ const HomePage = () => {
 
       {/* Categories */}
       <div className="mt-5 px-4">
-        <h2 className="mb-3 font-display text-sm font-semibold text-foreground">{t("home.categories")}</h2>
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <h2 className="mb-2 font-display text-sm font-semibold text-foreground">{t("home.categories")}</h2>
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
           {categories.map((cat, i) => (
             <CategoryChip
               key={cat.id}
