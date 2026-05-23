@@ -37,10 +37,27 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 const STATUS_FLOW: OrderStatus[] = ["Ordered", "Accepted", "Preparing", "Ready", "Picked Up", "Delivered"];
 
 const AGENT_NAMES = ["Rajesh K.", "Priya M.", "Arun S.", "Meena R.", "Vikram P."];
+const ORDERS_STORAGE_KEY = "tippay_live_orders";
+
+function parseStoredOrders(): LiveOrder[] {
+  try {
+    const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as LiveOrder[];
+    return parsed.map((o) => ({
+      ...o,
+      placedAt: new Date(o.placedAt),
+      statusHistory: o.statusHistory.map((h) => ({ ...h, time: new Date(h.time) })),
+    }));
+  } catch {
+    return [];
+  }
+}
 
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [orders, setOrders] = useState<LiveOrder[]>([]);
+  const [orders, setOrders] = useState<LiveOrder[]>(parseStoredOrders);
   const timersRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const timersResumedRef = useRef(false);
 
   const cancelOrder = useCallback((orderId: string) => {
     setOrders((prev) =>
@@ -95,6 +112,24 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     },
     [advanceStatus]
   );
+
+  useEffect(() => {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+  }, [orders]);
+
+  useEffect(() => {
+    if (timersResumedRef.current) return;
+    timersResumedRef.current = true;
+    orders.forEach((order) => {
+      if (order.status === "Delivered") return;
+      const stepIndex = STATUS_FLOW.indexOf(order.status);
+      if (stepIndex >= 0 && stepIndex < STATUS_FLOW.length - 1) {
+        scheduleAdvance(order.id, stepIndex);
+      }
+    });
+    // Resume status timers only for orders restored on initial load
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     return () => {
