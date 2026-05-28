@@ -6,7 +6,8 @@ import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, Tag, X, CheckCircle2, Wall
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion, AnimatePresence } from "framer-motion";
-import { mockCoupons, Coupon } from "@/data/mockData";
+import type { Coupon } from "@/types/models";
+const mockCoupons: Coupon[] = [];
 import { toast } from "sonner";
 import { useTranslation } from "@/context/LanguageContext";
 import BottomNav from "@/components/BottomNav";

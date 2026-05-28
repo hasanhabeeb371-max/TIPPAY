@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Search, Sparkles, Star, Clock, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { mockOrders } from "@/data/mockData";
+
 import { useRestaurants } from "@/context/RestaurantContext";
 import { useOrders } from "@/context/OrderContext";
 import { useTranslation } from "@/context/LanguageContext";
@@ -21,15 +21,6 @@ const SearchPage = () => {
     () =>
       [
         ...liveOrders,
-        ...mockOrders.map((order) => ({
-          ...order,
-          restaurantId: "",
-          placedAt: new Date(`${order.date} ${order.time}`),
-          deliveryFee: 0,
-          estimatedDelivery: "",
-          paymentMethod: "",
-          statusHistory: [],
-        })),
       ].sort((a, b) => b.placedAt.getTime() - a.placedAt.getTime()),
     [liveOrders]
   );

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import type { RestaurantMenuItem } from "@/data/restaurantMockData";
-import { allCategoriesNames } from "@/data/mockData";
+import type { RestaurantMenuItem } from "@/types/models";
+const allCategoriesNames: string[] = [];
 import { useRestaurants } from "@/context/RestaurantContext";
+import { useAuth } from "@/context/AuthContext";
 import { Plus, Pencil, Trash2, Leaf, X, Save, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,15 +26,21 @@ const emptyItem: Omit<RestaurantMenuItem, "id"> = {
   category: "",
   isVeg: false,
   isAvailable: true,
+  restaurantId: "",
 };
 
 const MenuEditor = () => {
-  const { menuItems, addMenuItem, updateMenuItem, deleteMenuItem, toggleMenuItemAvailability } = useRestaurants();
+  const { menuItems, adminRestaurants, addMenuItem, updateMenuItem, deleteMenuItem, toggleMenuItemAvailability } = useRestaurants();
+  const { user } = useAuth();
+  
+  const currentRestaurant = adminRestaurants.find(r => r.email === user?.email);
+  const myMenuItems = menuItems.filter(i => i.restaurantId === currentRestaurant?.id);
+  
   const [editingItem, setEditingItem] = useState<RestaurantMenuItem | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState(emptyItem);
 
-  const categories = [...new Set(menuItems.map((i) => i.category))];
+  const categories = [...new Set(myMenuItems.map((i) => i.category))];
 
   const openAdd = () => {
     setFormData(emptyItem);
@@ -60,6 +67,7 @@ const MenuEditor = () => {
       const newItem: RestaurantMenuItem = {
         ...formData,
         id: `m-new-${Date.now()}`,
+        restaurantId: currentRestaurant?.id || "",
       } as RestaurantMenuItem;
       addMenuItem(newItem);
       toast.success(`${formData.name} added to menu`);
@@ -82,7 +90,7 @@ const MenuEditor = () => {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h2 className="font-display text-xl font-bold text-foreground">Menu Editor</h2>
-          <p className="mt-1 text-sm text-muted-foreground">{menuItems.length} items in menu</p>
+          <p className="mt-1 text-sm text-muted-foreground">{myMenuItems.length} items in menu</p>
         </div>
         <Button onClick={openAdd} className="bg-primary text-primary-foreground hover:bg-primary/90" size="sm">
           <Plus size={16} className="mr-1" />
@@ -96,7 +104,7 @@ const MenuEditor = () => {
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{cat}</h3>
           <div className="space-y-2">
             <AnimatePresence mode="popLayout">
-              {menuItems
+              {myMenuItems
                 .filter((i) => i.category === cat)
                 .map((item) => (
                   <motion.div

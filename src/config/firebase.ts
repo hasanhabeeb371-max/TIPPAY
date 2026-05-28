@@ -7,13 +7,13 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyB6g41EXFgm6Gr9gwCBxSZIS-Weizofu00",
-  authDomain: "tippay-97865.firebaseapp.com",
-  projectId: "tippay-97865",
-  storageBucket: "tippay-97865.firebasestorage.app",
-  messagingSenderId: "18003179564",
-  appId: "1:18003179564:web:70a43f014b1cfc50917989",
-  measurementId: "G-EB5J83NT9C"
+  apiKey: "AIzaSyCK6Cw19OM3Pn5cXagjhNVE-RK8lK1EaW0",
+  authDomain: "dubaigoldwebsite.firebaseapp.com",
+  projectId: "dubaigoldwebsite",
+  storageBucket: "dubaigoldwebsite.firebasestorage.app",
+  messagingSenderId: "514202698759",
+  appId: "1:514202698759:web:2bc4aeb2eff4e9693fd6a2",
+  measurementId: "G-W5JXV95GD8"
 };
 
 // Initialize Firebase

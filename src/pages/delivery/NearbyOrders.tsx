@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { mockDeliveryOrders, type DeliveryOrder } from "@/data/deliveryMockData";
+import type { DeliveryOrder } from "@/types/models";
 import { MapPin, Clock, Store, Check, X, Navigation, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,7 +9,7 @@ const NearbyOrders = () => {
   const [orders, setOrders] = useState<DeliveryOrder[]>(() => {
     const saved = localStorage.getItem("tippay_delivery_orders");
     if (saved) return JSON.parse(saved);
-    return mockDeliveryOrders;
+    return [];
   });
 
   useEffect(() => {

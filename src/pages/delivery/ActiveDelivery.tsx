@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { mockDeliveryOrders, type DeliveryOrder } from "@/data/deliveryMockData";
+import type { DeliveryOrder } from "@/types/models";
 import { optimizeRoutes, type RouteWaypoint } from "@/utils/routeOptimizer";
 import { MapPin, Phone, Store, Navigation, CheckCircle2, Package, Truck, ClipboardCheck, ArrowRight, Gauge, Milestone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ const ActiveDelivery = () => {
   const [orders, setOrders] = useState<DeliveryOrder[]>(() => {
     const saved = localStorage.getItem("tippay_delivery_orders");
     if (saved) return JSON.parse(saved);
-    return mockDeliveryOrders;
+    return [];
   });
 
   // Active accepted orders (rider carries these)

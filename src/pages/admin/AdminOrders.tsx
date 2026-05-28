@@ -1,4 +1,5 @@
-import { adminOrders } from "@/data/adminMockData";
+import type { AdminOrder } from "@/types/models";
+const adminOrders: AdminOrder[] = [];
 import { CircleDot, Clock, ChefHat, Package, Truck, CheckCircle2, User, Store } from "lucide-react";
 import { motion } from "framer-motion";
 

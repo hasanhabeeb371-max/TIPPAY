@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Star, Clock, MapPin, UtensilsCrossed, Store } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { Restaurant } from "@/data/mockData";
+import type { Restaurant } from "@/types/models";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {

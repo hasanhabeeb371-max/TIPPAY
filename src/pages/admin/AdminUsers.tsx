@@ -1,4 +1,5 @@
-import { adminUsers } from "@/data/adminMockData";
+import type { AdminUser } from "@/types/models";
+const adminUsers: AdminUser[] = [];
 import { Mail, Phone, ShoppingBag, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 

@@ -1,12 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import type { Restaurant, MenuItem } from "@/data/mockData";
-import { restaurants as mockRestaurants } from "@/data/mockData";
-import type { AdminRestaurant } from "@/data/adminMockData";
-import type { RestaurantMenuItem } from "@/data/restaurantMockData";
-import { USE_MOCK_DATA } from "@/config/mockMode";
-import { getSeedAdminRestaurants, getSeedMenuItems } from "@/data/seedMockData";
+import type { Restaurant, MenuItem, AdminRestaurant, RestaurantMenuItem } from "@/types/models";
 import { useLocationContext } from "@/context/LocationContext";
 import { getDistance, generateRandomCoordinates } from "@/utils/distance";
+import { seedKadupunindaRestaurant, seedKadupunindaMenu } from "@/data/seedKadupuninda";
 
 function readStored<T>(key: string): T | null {
   try {
@@ -36,14 +32,25 @@ const RestaurantContext = createContext<RestaurantContextType | undefined>(undef
 export function RestaurantProvider({ children }: { children: ReactNode }) {
   const [adminRestaurants, setAdminRestaurants] = useState<AdminRestaurant[]>(() => {
     const saved = readStored<AdminRestaurant[]>("tippay_admin_restaurants");
-    if (saved !== null && (saved.length > 0 || !USE_MOCK_DATA)) return saved;
-    return USE_MOCK_DATA ? getSeedAdminRestaurants() : [];
+    const parsed = saved || [];
+    if (!parsed.some(r => r.id === seedKadupunindaRestaurant.id)) {
+      parsed.push(seedKadupunindaRestaurant);
+    }
+    return parsed;
   });
 
   const [menuItems, setMenuItems] = useState<RestaurantMenuItem[]>(() => {
     const saved = readStored<RestaurantMenuItem[]>("tippay_menu_items");
-    if (saved !== null && (saved.length > 0 || !USE_MOCK_DATA)) return saved;
-    return USE_MOCK_DATA ? getSeedMenuItems() : [];
+    const parsed = saved || [];
+    seedKadupunindaMenu.forEach(seedItem => {
+      const existingIdx = parsed.findIndex(i => i.id === seedItem.id);
+      if (existingIdx === -1) {
+        parsed.push(seedItem);
+      } else {
+        parsed[existingIdx] = { ...parsed[existingIdx], image: seedItem.image, restaurantId: seedItem.restaurantId };
+      }
+    });
+    return parsed;
   });
 
   const { userLocation } = useLocationContext();
@@ -95,16 +102,13 @@ export function RestaurantProvider({ children }: { children: ReactNode }) {
 
   const activeRestaurants = adminRestaurants.filter((r) => r.status === "approved");
   const derivedRestaurants: Restaurant[] = activeRestaurants.map((ar) => {
-    const mockMatch = mockRestaurants.find((r) => r.id === ar.id);
     const calculatedDistance =
       userLocation && ar.lat && ar.lng
         ? getDistance(userLocation.lat, userLocation.lng, ar.lat, ar.lng).toFixed(1) + " km"
-        : mockMatch?.distance ?? "1.2 km";
+        : "1.2 km";
 
-    const menu: MenuItem[] = mockMatch
-      ? mockMatch.menu
-      : menuItems
-          .filter((m) => m.isAvailable)
+    const menu: MenuItem[] = menuItems
+          .filter((m) => m.isAvailable && m.restaurantId === ar.id)
           .map(
             (m) =>
               ({
@@ -124,10 +128,10 @@ export function RestaurantProvider({ children }: { children: ReactNode }) {
       name: ar.name,
       image: ar.image,
       category: ar.category,
-      rating: mockMatch?.rating ?? 4.5,
+      rating: 4.5,
       distance: calculatedDistance,
-      deliveryTime: mockMatch?.deliveryTime ?? "30-45 min",
-      isOpen: mockMatch?.isOpen ?? true,
+      deliveryTime: "30-45 min",
+      isOpen: true,
       lat: ar.lat,
       lng: ar.lng,
       menu,
@@ -137,9 +141,7 @@ export function RestaurantProvider({ children }: { children: ReactNode }) {
   const restaurants: Restaurant[] =
     derivedRestaurants.length > 0
       ? [...derivedRestaurants].sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance))
-      : USE_MOCK_DATA
-        ? [...mockRestaurants]
-        : [];
+      : [];
 
   return (
     <RestaurantContext.Provider value={{

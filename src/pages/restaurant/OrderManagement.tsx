@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { mockRestaurantOrders, type RestaurantOrder } from "@/data/restaurantMockData";
-import type { OrderStatus } from "@/data/mockData";
+import type { RestaurantOrder, OrderStatus } from "@/types/models";
 import { Clock, CheckCircle2, ChefHat, Package, Truck, CircleDot, Phone, MapPin, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,7 +23,7 @@ const tabs: { label: string; statuses: OrderStatus[] }[] = [
 ];
 
 const OrderManagement = () => {
-  const [orders, setOrders] = useState<RestaurantOrder[]>(mockRestaurantOrders);
+  const [orders, setOrders] = useState<RestaurantOrder[]>([]);
   const [activeTab, setActiveTab] = useState(0);
 
   const filteredOrders = orders.filter((o) => tabs[activeTab].statuses.includes(o.status));

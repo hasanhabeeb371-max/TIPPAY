@@ -1,4 +1,4 @@
-import type { Restaurant } from "@/data/mockData";
+import type { Restaurant } from "@/types/models";
 import type { LiveOrder } from "@/context/OrderContext";
 
 export interface RecommendedFood {

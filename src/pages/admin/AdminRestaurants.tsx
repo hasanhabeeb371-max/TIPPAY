@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AdminRestaurant } from "@/data/adminMockData";
+import type { AdminRestaurant } from "@/types/models";
 import { useRestaurants } from "@/context/RestaurantContext";
 import { useAuth } from "@/context/AuthContext";
 import { Check, X, Ban, Eye, MapPin, Mail, Phone, FileText, Trash2 } from "lucide-react";

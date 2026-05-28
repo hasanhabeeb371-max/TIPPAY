@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
-import type { OrderStatus } from "@/data/mockData";
+import type { OrderStatus } from "@/types/models";
 
 export interface OrderItem {
   name: string;

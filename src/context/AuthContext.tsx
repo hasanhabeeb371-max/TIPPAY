@@ -41,14 +41,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const [users, setUsers] = useState<User[]>(() => {
-    const saved = localStorage.getItem("tippay_users");
-    if (saved) return JSON.parse(saved);
-    return [
+    const defaultUsers: User[] = [
       { name: "Super Admin", email: "tippay@admin.com", phone: "+91 9999999999", role: "admin", status: "active", joinedDate: "2025-01-01" },
       { name: "Restaurant Demo", email: "rest@tippay.com", phone: "+91 9999999999", role: "restaurant", status: "active", joinedDate: "2025-01-01" },
       { name: "Agent Demo", email: "agent@tippay.com", phone: "+91 9999999999", role: "delivery", status: "active", joinedDate: "2025-01-01" },
+      { name: "Kadupuninda", email: "kadupuninda@tippay.com", phone: "9346763022", role: "restaurant", status: "active", joinedDate: "2025-01-01" },
       { name: "Customer Demo", email: "demo@gmail.com", phone: "+91 9999999999", role: "customer", status: "active", joinedDate: "2025-01-01" }
     ];
+
+    const saved = localStorage.getItem("tippay_users");
+    if (saved) {
+      try {
+        const parsed: User[] = JSON.parse(saved);
+        defaultUsers.forEach(defaultUser => {
+          if (!parsed.some(u => u.email === defaultUser.email)) {
+            parsed.push(defaultUser);
+          }
+        });
+        return parsed;
+      } catch (e) {
+        return defaultUsers;
+      }
+    }
+    return defaultUsers;
   });
 
   useEffect(() => {

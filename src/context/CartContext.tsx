@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
-import type { MenuItem } from "@/data/mockData";
+import type { MenuItem } from "@/types/models";
 
 export interface CartItem extends MenuItem {
   quantity: number;

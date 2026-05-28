@@ -2,7 +2,10 @@ import { useMemo, useState } from "react";
 import { MapPin, Search, X, Navigation, Utensils, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
-import { categories, hotDeals } from "@/data/mockData";
+import type { Category, HotDeal } from "@/types/models";
+
+const categories: Category[] = [];
+const hotDeals: HotDeal[] = [];
 import { useOrders } from "@/context/OrderContext";
 import ActiveOrderStatusCard from "@/components/ActiveOrderStatusCard";
 import CategoryChip from "@/components/CategoryChip";

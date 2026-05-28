@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { HotDeal } from "@/data/mockData";
+import type { HotDeal } from "@/types/models";
 
 interface HotDealsCarouselProps {
   deals: HotDeal[];

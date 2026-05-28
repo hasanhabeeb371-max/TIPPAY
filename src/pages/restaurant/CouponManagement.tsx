@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { mockCoupons, saveMockCoupons, Coupon } from "@/data/mockData";
+import type { Coupon } from "@/types/models";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,15 @@ const emptyCoupon: Omit<Coupon, "id"> = {
 };
 
 const CouponManagement = () => {
-  const [coupons, setCoupons] = useState<Coupon[]>(mockCoupons);
+  const [coupons, setCoupons] = useState<Coupon[]>(() => {
+    const stored = localStorage.getItem("tippay_coupons");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  const updateCoupons = (newCoupons: Coupon[]) => {
+    localStorage.setItem("tippay_coupons", JSON.stringify(newCoupons));
+    setCoupons(newCoupons);
+  };
   const [isAdding, setIsAdding] = useState(false);
   const [formData, setFormData] = useState(emptyCoupon);
 
@@ -43,24 +51,21 @@ const CouponManagement = () => {
       id: `c-${Date.now()}`,
     };
 
-    const newCoupons = [...mockCoupons, newCoupon];
-    saveMockCoupons(newCoupons);
-    setCoupons(newCoupons);
+    const newCoupons = [...coupons, newCoupon];
+    updateCoupons(newCoupons);
     toast.success(`Coupon ${formData.code} created successfully`);
     setIsAdding(false);
   };
 
   const handleDelete = (id: string) => {
-    const newCoupons = mockCoupons.filter(c => c.id !== id);
-    saveMockCoupons(newCoupons);
-    setCoupons(newCoupons);
+    const newCoupons = coupons.filter(c => c.id !== id);
+    updateCoupons(newCoupons);
     toast.success("Coupon deleted");
   };
 
   const toggleAvailability = (id: string) => {
-    const newCoupons = mockCoupons.map(c => c.id === id ? { ...c, isActive: !c.isActive } : c);
-    saveMockCoupons(newCoupons);
-    setCoupons(newCoupons);
+    const newCoupons = coupons.map(c => c.id === id ? { ...c, isActive: !c.isActive } : c);
+    updateCoupons(newCoupons);
     toast.success("Coupon status updated");
   };
 

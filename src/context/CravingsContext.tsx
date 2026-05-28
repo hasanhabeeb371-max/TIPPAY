@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useCart } from "@/context/CartContext";
-import type { MenuItem } from "@/data/mockData";
+import type { MenuItem } from "@/types/models";
 import { toast } from "sonner";
 
 export interface RestaurantOffer {
@@ -42,31 +42,7 @@ export const CravingsProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [cravings, setCravings] = useState<CravingRequest[]>(() => {
     const saved = localStorage.getItem("tippay_cravings");
     if (saved) return JSON.parse(saved);
-    return [
-      {
-        id: "crav-1",
-        customerEmail: "demo@gmail.com",
-        customerName: "Customer Demo",
-        dishName: "Extra Cheesy Truffle Paneer Tikka",
-        description: "Looking for a rich paneer tikka with shaved black truffle and extra liquid cheese on top. Mild spicy.",
-        maxPrice: 450,
-        tags: ["veg", "paneer", "spicy"],
-        status: "active",
-        createdAt: new Date(Date.now() - 3600000).toISOString(),
-        offers: [
-          {
-            id: "off-1",
-            restaurantId: "r-1", // Burger King / Royal Kitchen etc.
-            restaurantName: "Royal Kitchen",
-            price: 399,
-            prepTime: "25 mins",
-            message: "We can make this! Our chef has imported truffle oil and will use vintage cheddar cheese sauce.",
-            status: "pending",
-            createdAt: new Date(Date.now() - 1800000).toISOString(),
-          }
-        ]
-      }
-    ];
+    return [];
   });
 
   useEffect(() => {

@@ -1,4 +1,12 @@
-import { adminOverview } from "@/data/adminMockData";
+const adminOverview = {
+  totalRestaurants: 0,
+  totalOrders: 0,
+  totalUsers: 0,
+  totalAgents: 0,
+  pendingApprovals: 0,
+  todayOrders: 0,
+  todayRevenue: 0,
+};
 import { Store, ShoppingBag, Users, Truck, AlertCircle, DollarSign, TrendingUp, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 

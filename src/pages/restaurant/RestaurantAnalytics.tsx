@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { analyticsData } from "@/data/restaurantMockData";
+const analyticsData: Record<Period, { totalOrders: number; revenue: number; orderTrend: any[]; popularItems: any[] }> = {
+  daily: { totalOrders: 0, revenue: 0, orderTrend: [], popularItems: [] },
+  weekly: { totalOrders: 0, revenue: 0, orderTrend: [], popularItems: [] },
+  monthly: { totalOrders: 0, revenue: 0, orderTrend: [], popularItems: [] },
+  yearly: { totalOrders: 0, revenue: 0, orderTrend: [], popularItems: [] },
+};
 import { TrendingUp, ShoppingBag, DollarSign, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
@@ -25,7 +30,7 @@ const RestaurantAnalytics = () => {
   const [period, setPeriod] = useState<Period>("daily");
   const data = analyticsData[period];
 
-  const avgOrderValue = Math.round(data.revenue / data.totalOrders);
+  const avgOrderValue = data.totalOrders > 0 ? Math.round(data.revenue / data.totalOrders) : 0;
 
   return (
     <div>

@@ -1,4 +1,4 @@
-import type { Category } from "@/data/mockData";
+import type { Category } from "@/types/models";
 import { motion } from "framer-motion";
 
 interface Props {

@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
 import ReviewDialog from "@/components/ReviewDialog";
 import WhatsChat from "@/components/WhatsChat";
-import type { OrderStatus } from "@/data/mockData";
+import type { OrderStatus } from "@/types/models";
 
 const STATUS_STEPS: { status: OrderStatus; label: string; icon: React.ElementType; description: string }[] = [
   { status: "Ordered", label: "Order Placed", icon: CircleDot, description: "Your order has been placed" },

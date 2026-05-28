@@ -1,4 +1,10 @@
-import { agentStats } from "@/data/deliveryMockData";
+import type { AgentStats } from "@/types/models";
+const agentStats: AgentStats = {
+  totalDeliveries: 0,
+  todayDeliveries: 0,
+  avgRating: 0,
+  earnings: { today: 0, week: 0, month: 0 },
+};
 import { TrendingUp, Package, Star, DollarSign, Award, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 

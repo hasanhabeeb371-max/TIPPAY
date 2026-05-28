@@ -8,7 +8,7 @@ import { useOrders } from "@/context/OrderContext";
 import { useCart } from "@/context/CartContext";
 import { useRestaurants } from "@/context/RestaurantContext";
 import { useTranslation } from "@/context/LanguageContext";
-import { mockOrders } from "@/data/mockData";
+
 import heroBanner from "@/assets/hero-banner.jpg";
 import { toast } from "sonner";
 
@@ -23,15 +23,6 @@ const HistoryPage = () => {
     () =>
       [
         ...liveOrders,
-        ...mockOrders.map((order) => ({
-          ...order,
-          restaurantId: "",
-          placedAt: new Date(`${order.date} ${order.time}`),
-          deliveryFee: 0,
-          estimatedDelivery: "",
-          paymentMethod: "",
-          statusHistory: [],
-        })),
       ].sort((a, b) => b.placedAt.getTime() - a.placedAt.getTime()),
     [liveOrders]
   );

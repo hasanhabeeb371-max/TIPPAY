@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { mockOrders, type OrderStatus } from "@/data/mockData";
+import type { OrderStatus } from "@/types/models";
 import { useOrders } from "@/context/OrderContext";
 import { useCravings } from "@/context/CravingsContext";
 import { useTranslation } from "@/context/LanguageContext";
@@ -40,7 +40,6 @@ const OrdersPage = () => {
       time: o.placedAt.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
       isLive: true,
     })),
-    ...mockOrders.map((o) => ({ ...o, isLive: false })),
   ];
 
   return (
